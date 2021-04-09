@@ -1,7 +1,7 @@
-#include "timeselectiondialog.h"
-#include "../tools.h"
+#include "TimeSelectionDialog.h"
 #include <QMessageBox>
 #include <QTime>
+#include <QDebug>
 
 TimeSelectionDialog::TimeSelectionDialog(QWidget* parent)
     : QDialog(parent)
@@ -39,15 +39,20 @@ void TimeSelectionDialog::initLayout() {
 }
 
 void TimeSelectionDialog::setTimeScope(AvailableTimes availableTimes) {
+    // 重置是否选择了时间段的标记
+    isSelected = false;
+    // 重置当前时间点是否有可用时间
+    available = false;
+    // 重置可用时间
+    this->availableTimes = availableTimes;
+
     // 获取当前时间的小时值
     int currentHourInt = QTime::currentTime().toString("HH").toInt();
+
     // 首先清空下拉列表内容
     startTime->clear();
     endTime->clear();
-    // 重置可用时间
-    this->availableTimes = availableTimes;
-    // 当前时间点是否有可用时间
-    available = false;
+
     // 临时存储可用起始时间
     int start;
     int end;
@@ -118,15 +123,11 @@ void TimeSelectionDialog::confirmTime() {
     }
     // 若时间合法，则提示用户选择的时间
     if (valid == true) {
-        QMessageBox::information(
-             this,
-             tr("选择成功"),
-             tr("你选择了时间段：\n") +
-             Tools::intToTimeString(start) +
-             tr("-") +
-             Tools::intToTimeString(end)
-        );
+        // 标记选中了时间段
+        isSelected = true;
+        // 发送时间范围
         emit sendTimeScope(TimeScope(start, end));
+        qDebug() << "Send time scope";
         close();
     }
     else {
@@ -135,7 +136,11 @@ void TimeSelectionDialog::confirmTime() {
 }
 
 void TimeSelectionDialog::cancel() {
-    emit notSelectedTime();
+    // 若没有选择时间段，则发送未选择时间段的信号
+    if (isSelected == false) {
+        emit notSelectedTime();
+    }
+    // 如果对话框可见，则关闭对话框
     if (this->isVisible()) {
         close();
     }

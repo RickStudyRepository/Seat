@@ -1,5 +1,6 @@
-#include "makeappointment.h"
-#include "../tools.h"
+#include "MakeAppointment.h"
+#include "../../Tools/AliasName.h"
+#include "../../Tools/Tools.h"
 #include <QMessageBox>
 #include <QDebug>
 
@@ -7,6 +8,7 @@ MakeAppointment::MakeAppointment(QWidget *parent) : QWidget(parent) {
     initSeats();
     initLayout();
     initTimeDialog();
+    initConfirmDialog();
 
     // 设置滚动区域
     scrollArea->setWidget(makeAppointment);
@@ -14,6 +16,8 @@ MakeAppointment::MakeAppointment(QWidget *parent) : QWidget(parent) {
 }
 
 void MakeAppointment::initSeats() {
+    // TODO:call database here
+    // 要在这里载入所有座位的可用时间段
     SeatWidget* temp;
     for (int i = 0; i < 100; i++) {
         temp = new SeatWidget(QPixmap(":/images/Seat.ico"), i + 1);
@@ -34,7 +38,7 @@ void MakeAppointment::initTimeDialog() {
     // 接收选定的时间范围
     connect(timeDialog, SIGNAL(sendTimeScope(TimeScope)), this, SLOT(receiveTimeScope(TimeScope)));
     // 接收是否选择了时间段
-    connect(timeDialog, SIGNAL(notSelectedTime()), this, SLOT(notSelected()));
+    connect(timeDialog, SIGNAL(notSelectedTime()), this, SLOT(resetSeatAndTimeScope()));
 }
 
 void MakeAppointment::callTimeDialog(int seatNum) {
@@ -51,32 +55,59 @@ void MakeAppointment::callTimeDialog(int seatNum) {
     timeDialog->show();
 }
 
-void MakeAppointment::hideTimeDialog() {
+void MakeAppointment::initConfirmDialog() {
+    // 确认预约之后向数据库写入预约信息
+    connect(confirmDialog, SIGNAL(confirmed()), this, SLOT(writeAppointmentToDatabase()));
+}
+
+void MakeAppointment::callConfirmDialog() {
+    QString text =
+            tr("座位号：") + QString::number(selectedSeatNum) +
+            tr("\n时间：") +
+            Tools::intToTimeString(timeScope.first) +
+            tr("-") +
+            Tools::intToTimeString(timeScope.second) +
+            tr("\n请确认你的预约信息！");
+    confirmDialog->setTextAndShow(text);
+}
+
+void MakeAppointment::hideDialog() {
+    // 关闭确认对话框
+    if (confirmDialog->isVisible()) {
+        confirmDialog->close();
+    }
+    // 关闭时间选择对话框
     if (timeDialog->isVisible()) {
         timeDialog->close();
     }
+    // 以防万一，重置座位号和时间段
+    resetSeatAndTimeScope();
 }
 
 void MakeAppointment::receiveTimeScope(TimeScope timeScope) {
+    // 接收时间段
     this->timeScope = timeScope;
-    QString timeScopeString =
-            Tools::intToTimeString(timeScope.first) +
-            tr("-") +
-            Tools::intToTimeString(timeScope.second);
     // 询问用户是否确认预约
-    if (QMessageBox::question(
-                             this,
-                             tr("预约确认"),
-                             tr("座位号：") + QString::number(selectedSeatNum) +
-                             tr("\n时间：") + timeScopeString +
-                             tr("\n请确认！")
-                         ) == QMessageBox::Yes) {
-        // write database here
-        qDebug() << "确认预约";
-    }
+    callConfirmDialog();
 }
 
-void MakeAppointment::notSelected() {
+void MakeAppointment::resetStudentNum(QString studentNum) {
+    this->studentNum = studentNum;
+}
+
+void MakeAppointment::writeAppointmentToDatabase() {
+    qDebug() << "向数据库写入预约信息：\n"
+             << "预约人：" << studentNum << "\n"
+             << "座位号：" << selectedSeatNum << "\n"
+             << "时间段："
+             << Tools::intToTimeString(timeScope.first)
+             << "-"
+             << Tools::intToTimeString(timeScope.second);
+    // 重置座位号和时间段
+    resetSeatAndTimeScope();
+}
+
+void MakeAppointment::resetSeatAndTimeScope() {
     // 若呼出选择时间对话框而没有选择时间段，则重置选中的编号和选中的时间段
     selectedSeatNum = -1;
     timeScope = TimeScope(-1, -1);

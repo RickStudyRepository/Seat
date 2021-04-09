@@ -2,12 +2,6 @@
 #define TOOLS_H
 
 #include <QString>
-#include <vector>
-
-// 时间范围，由整点限定
-typedef std::pair<int, int> TimeScope;
-// 可用的时间范围列表
-typedef std::vector<TimeScope> AvailableTimes;
 
 class Tools {
 public:

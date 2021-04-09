@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>images/HomePage.jpg</file>
+        <file>images/ReturnHomePage.svg</file>
+        <file>images/Seat.ico</file>
     </qresource>
 </RCC>

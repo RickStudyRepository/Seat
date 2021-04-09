@@ -7,12 +7,8 @@
 #include <QComboBox>
 #include <QPushButton>
 #include <QGridLayout>
-#include <vector>
-
-// 时间范围，由整点限定
-typedef std::pair<int, int> TimeScope;
-// 可用的时间范围列表
-typedef std::vector<TimeScope> AvailableTimes;
+#include "../../Tools/Tools.h"
+#include "../../Tools/AliasName.h"
 
 class TimeSelectionDialog : public QDialog
 {
@@ -29,6 +25,8 @@ private:
     AvailableTimes availableTimes;
     // 当前时间点是否有可用时间段
     bool available;
+    // 标记用户是否选择了时间
+    bool isSelected;
     // 整体布局
     QGridLayout* layout = new QGridLayout(this);
     // 开始时间下拉列表

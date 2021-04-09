@@ -1,16 +1,16 @@
-#ifndef MYQLABEL_H
-#define MYQLABEL_H
+#ifndef CLICKEDABLELABEL_H
+#define CLICKEDABLELABEL_H
 
 #include <QLabel>
 #include <QWidget>
 #include <QMouseEvent>
 
-class MyQLabel : public QLabel
+class ClickedableLabel : public QLabel
 {
     Q_OBJECT
 
 public:
-    MyQLabel(QWidget* parent = nullptr)
+    ClickedableLabel(QWidget* parent = nullptr)
         : QLabel(parent)
     {
 
@@ -19,15 +19,21 @@ public:
 private:
     // 用于捕获鼠标释放的信号
     void mouseReleaseEvent(QMouseEvent* mouseEvent) {
+        // 鼠标左键释放
         if (mouseEvent->button() == Qt::LeftButton) {
-            // 鼠标左键释放信号
             emit leftButtonRelease();
+        }
+        // 鼠标右键释放
+        if (mouseEvent->button() == Qt::RightButton) {
+            emit rightButtonRelease();
         }
     }
 
 signals:
     // 鼠标左键释放的信号
     void leftButtonRelease();
+    // 鼠标右键释放的信号
+    void rightButtonRelease();
 };
 
-#endif // MYQLABEL_H
+#endif // CLICKEDABLELABEL_H

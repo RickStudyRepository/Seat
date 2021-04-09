@@ -4,8 +4,11 @@
 #include <QWidget>
 #include <QGridLayout>
 #include <QScrollArea>
-#include "seatwidget.h"
-#include "timeselectiondialog.h"
+#include <QPushButton>
+#include <QString>
+#include "SeatWidget.h"
+#include "TimeSelectionDialog.h"
+#include "../../Tools/ConfirmDialog.h"
 
 class MakeAppointment : public QWidget
 {
@@ -13,7 +16,9 @@ class MakeAppointment : public QWidget
 public:
     explicit MakeAppointment(QWidget *parent = nullptr);
     // 让上层部件调用该方法隐藏对话框
-    void hideTimeDialog();
+    void hideDialog();
+    // 设置预约人学号
+    void resetStudentNum(QString studentNum);
 
 private:
     // 顶层部件
@@ -25,6 +30,15 @@ private:
     // 时间选择对话框
     QString selectTimeString = tr("选择时间");
     TimeSelectionDialog* timeDialog = new TimeSelectionDialog(this);
+    // 确认预约对话框
+    ConfirmDialog* confirmDialog = new ConfirmDialog(this);
+
+    // 预约人的学号
+    QString studentNum;
+    // 被选中的座位的编号
+    int selectedSeatNum = -1;
+    // 选择的可用时间段
+    TimeScope timeScope = TimeScope(-1, -1);
 
     // 初始化座位
     void initSeats();
@@ -32,11 +46,10 @@ private:
     void initLayout();
     // 初始化时间选择对话框
     void initTimeDialog();
-
-    // 被选中的座位的编号
-    int selectedSeatNum = -1;
-    // 选择的可用时间段
-    TimeScope timeScope = TimeScope(-1, -1);
+    // 初始化确认预约对话框
+    void initConfirmDialog();
+    // 呼出确认预约对话框，返回是否确认预约
+    void callConfirmDialog();
 
 signals:
 
@@ -45,8 +58,10 @@ private slots:
     void callTimeDialog(int seatNum);
     // 接收选择的时间段
     void receiveTimeScope(TimeScope timeScope);
-    // 接收选择状态
-    void notSelected();
+    // 向数据库写入预约信息
+    void writeAppointmentToDatabase();
+    // 重置座位号和选择的时间段
+    void resetSeatAndTimeScope();
 };
 
 #endif // MAKEAPPOINTMENT_H

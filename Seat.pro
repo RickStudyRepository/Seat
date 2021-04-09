@@ -24,11 +24,25 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += \
-        main.cpp \
-        mainwindow.cpp
+    main.cpp \
+    MainWindow.cpp \
+    OperationPage/OperationPage.cpp \
+    OperationPage/MakeAppointment/MakeAppointment.cpp \
+    OperationPage/MakeAppointment/TimeSelectionDialog.cpp
 
 HEADERS += \
-        mainwindow.h
+    MainWindow.h \
+    Tools/ClickedableLabel.h \
+    Tools/ConfirmDialog.h \
+    Tools/Tools.h \
+    HomePage/HomePage.h \
+    OperationPage/OperationPage.h \
+    OperationPage/HeadWidget/CountDown.h \
+    OperationPage/HeadWidget/HeadWidget.h \
+    OperationPage/MakeAppointment/MakeAppointment.h \
+    OperationPage/MakeAppointment/SeatWidget.h \
+    OperationPage/MakeAppointment/TimeSelectionDialog.h \
+    Tools/AliasName.h
 
 RESOURCES += \
     images.qrc

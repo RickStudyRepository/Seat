@@ -7,7 +7,7 @@
 #include <QString>
 #include <QChar>
 #include <QVBoxLayout>
-#include "myqlabel.h"
+#include "../../Tools/ClickedableLabel.h"
 
 class SeatWidget : public QWidget
 {
@@ -41,7 +41,7 @@ public:
     }
 
 private:
-    MyQLabel* photoLabel = new MyQLabel(this);
+    ClickedableLabel* photoLabel = new ClickedableLabel(this);
     QLabel* numLabel = new QLabel(this);
     int num;
 
