@@ -1,0 +1,59 @@
+#ifndef CONFIRMAPPOINMENTDIALOG_H
+#define CONFIRMAPPOINMENTDIALOG_H
+
+#include <QWidget>
+#include <QDialog>
+#include <QLabel>
+#include <QPushButton>
+#include <QGridLayout>
+#include "../../tools.h"
+
+class ConfirmAppoinmentDialog : public QDialog {
+    Q_OBJECT
+private:
+    QGridLayout* layout = new QGridLayout(this);
+    QLabel* confirmStringLabel = new QLabel(this);
+    QPushButton* confirmButton = new QPushButton(tr("确认预约"), this);
+    QPushButton* cancelButton = new QPushButton(tr("我再看看"), this);
+
+public:
+    ConfirmAppoinmentDialog(QWidget* parent = nullptr)
+        : QDialog(parent) {
+        // 信号和槽绑定
+        connect(confirmButton, SIGNAL(released()), this , SLOT(confirm()));
+        connect(cancelButton, SIGNAL(released()), this, SLOT(close()));
+
+        // 窗体属性设置
+        setFixedSize(290, 130);
+        setWindowTitle(tr("预约确认"));
+        // 设置为只能当前窗口活动
+        setWindowModality(Qt::ApplicationModal);
+        layout->addWidget(confirmStringLabel, 0, 0, 1, 2);
+        layout->addWidget(confirmButton, 1, 0, 1, 1);
+        layout->addWidget(cancelButton, 1, 1, 1, 1);
+        setLayout(layout);
+    }
+
+    void showNewAppointment(int seatNum, TimeScope timeScope) {
+        confirmStringLabel->setText(
+                    tr("座位号：") + QString::number(seatNum) +
+                    tr("\n时间：") +
+                    Tools::intToTimeString(timeScope.first) +
+                    tr("-") +
+                    Tools::intToTimeString(timeScope.second) +
+                    tr("\n请确认你的预约信息！"));
+        show();
+    }
+
+signals:
+    void confirmed();
+
+private slots:
+    void confirm() {
+        // 发送确认预约的信号
+        emit confirmed();
+        close();
+    }
+};
+
+#endif // CONFIRMAPPOINMENTDIALOG_H
