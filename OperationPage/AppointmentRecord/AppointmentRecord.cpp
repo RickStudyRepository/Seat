@@ -134,7 +134,7 @@ void AppointmentRecord::callContinueDialog(int rowNum) {
     // TODO:call database here
     // 从数据库中获取该座位的可用时间段
     int seatNum = appointments[rowNum].seatNum;
-    AliasName::AvailableTimes availableTimes;
+    AliasName::TimeScopes availableTimes;
     availableTimes.push_back(AliasName::TimeScope(21, 22));
     continueTimeDialog->showContinueDialog(currentTimeScope, availableTimes);
 }

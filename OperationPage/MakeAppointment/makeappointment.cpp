@@ -46,7 +46,7 @@ void MakeAppointment::callTimeDialog(int seatNum) {
     selectedSeatNum = seatNum;
     // TODO: call database here
     // 这里需要使用数据库获取该座位的可用时间段
-    AliasName::AvailableTimes test;
+    AliasName::TimeScopes test;
     test.push_back(AliasName::TimeScope(8, 12));
     test.push_back(AliasName::TimeScope(14, 22));
 

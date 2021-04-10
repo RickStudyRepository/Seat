@@ -18,11 +18,11 @@ public:
     TimeSelectionDialog(QWidget* parent = NULL);
 
     // 设置时间范围，实现对话框的复用
-    void setTimeScope(AliasName::AvailableTimes availableTimes);
+    void setTimeScope(AliasName::TimeScopes availableTimes);
 
 private:
     // 所有的可用时间
-    AliasName::AvailableTimes availableTimes;
+    AliasName::TimeScopes availableTimes;
     // 当前时间点是否有可用时间段
     bool available;
     // 标记用户是否选择了时间

@@ -40,7 +40,7 @@ void TimeSelectionDialog::initLayout() {
     setLayout(layout);
 }
 
-void TimeSelectionDialog::setTimeScope(AliasName::AvailableTimes availableTimes) {
+void TimeSelectionDialog::setTimeScope(AliasName::TimeScopes availableTimes) {
     // 重置是否选择了时间段的标记
     isSelected = false;
     // 重置当前时间点是否有可用时间

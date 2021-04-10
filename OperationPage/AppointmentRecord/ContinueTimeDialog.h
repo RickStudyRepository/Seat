@@ -18,13 +18,13 @@ public:
     ContinueTimeDialog(QWidget* parent = NULL);
 
     // 展示续约对话框
-    void showContinueDialog(AliasName::TimeScope timeScope, AliasName::AvailableTimes availableTimes);
+    void showContinueDialog(AliasName::TimeScope timeScope, AliasName::TimeScopes availableTimes);
 
 private:
     // 当前选定的时间范围
     AliasName::TimeScope currentTimeScope;
     // 所有的可用时间
-    AliasName::AvailableTimes availableTimes;
+    AliasName::TimeScopes availableTimes;
     // 当前时间点是否有可用时间段
     bool available;
     // 标记用户是否选择了时间

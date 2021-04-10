@@ -30,7 +30,7 @@ void ContinueTimeDialog::initLayout() {
     setLayout(layout);
 }
 
-void ContinueTimeDialog::showContinueDialog(AliasName::TimeScope timeScope, AliasName::AvailableTimes availableTimes) {
+void ContinueTimeDialog::showContinueDialog(AliasName::TimeScope timeScope, AliasName::TimeScopes availableTimes) {
     // 重置当前选定的时间范围和可用时间范围
     currentTimeScope = timeScope;
     this->availableTimes = availableTimes;

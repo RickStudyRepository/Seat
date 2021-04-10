@@ -8,7 +8,7 @@ namespace AliasName {
     // 时间范围，整点范围
     typedef std::pair<int, int> TimeScope;
     // 可用的时间范围列表
-    typedef std::vector<TimeScope> AvailableTimes;
+    typedef std::vector<TimeScope> TimeScopes;
 
     // 一条预约信息
     typedef struct Appointment {
