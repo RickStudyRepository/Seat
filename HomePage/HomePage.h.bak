@@ -2,21 +2,19 @@
 #define HOMEPAGE_H
 
 #include <QWidget>
-#include <QDebug>
-#include "AdminLabel.h"
+#include "Tools/ClickedableLabel.h"
 
 class HomePage : public QWidget {
     Q_OBJECT
 private:
-    AdminLabel* label = new AdminLabel(this);
+    ClickedableLabel* label = new ClickedableLabel(this);
 
 public:
     HomePage(QWidget* parent = NULL)
         : QWidget(parent)
     {
         label->setPixmap(QPixmap(QString(":/images/HomePage.jpg")));
-        connect(label, SIGNAL(otherPlaceRelease()), this, SLOT(gotoOperationPage()));
-        connect(label, SIGNAL(leftUpCornerRelease()), this, SLOT(gotoAdminPage()));
+        connect(label, SIGNAL(leftButtonRelease()), this, SLOT(gotoOperationPage()));
     }
 
     void gotoBack() {
@@ -28,19 +26,11 @@ public:
     }
 
 signals:
-    // 前往操作界面
     void gotoOperationPageSignal();
-    // 前往超级管理员界面
-    void gotoAdminPageSignal();
 
 private slots:
     void gotoOperationPage() {
         emit gotoOperationPageSignal();
-    }
-
-    void gotoAdminPage() {
-        qDebug() << tr("前往超级管理员界面");
-        emit gotoAdminPageSignal();
     }
 };
 
