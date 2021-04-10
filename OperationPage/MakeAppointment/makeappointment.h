@@ -8,7 +8,7 @@
 #include <QString>
 #include "SeatWidget.h"
 #include "TimeSelectionDialog.h"
-#include "../../Tools/ConfirmDialog.h"
+#include "../../Tools/Dialog/ConfirmDialog.h"
 
 class MakeAppointment : public QWidget
 {

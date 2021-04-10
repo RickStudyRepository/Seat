@@ -10,7 +10,7 @@
 #include "OperationAndStatus.h"
 #include "ContinueTimeDialog.h"
 #include "../../Tools/AliasName.h"
-#include "../../Tools/ConfirmDialog.h"
+#include "../../Tools/Dialog/ConfirmDialog.h"
 
 class AppointmentRecord : public QWidget
 {

@@ -30,12 +30,12 @@ SOURCES += \
     OperationPage/MakeAppointment/MakeAppointment.cpp \
     OperationPage/MakeAppointment/TimeSelectionDialog.cpp \
     OperationPage/AppointmentRecord/AppointmentRecord.cpp \
-    OperationPage/AppointmentRecord/ContinueTimeDialog.cpp
+    OperationPage/AppointmentRecord/ContinueTimeDialog.cpp \
+    Tools/Dialog/AbstractTimeSelectionDialog.cpp
 
 HEADERS += \
     MainWindow.h \
     Tools/ClickedableLabel.h \
-    Tools/ConfirmDialog.h \
     Tools/Tools.h \
     HomePage/HomePage.h \
     OperationPage/OperationPage.h \
@@ -48,7 +48,10 @@ HEADERS += \
     OperationPage/AppointmentRecord/OperationAndStatus.h \
     OperationPage/AppointmentRecord/AppointmentRecord.h \
     OperationPage/AppointmentRecord/ContinueTimeDialog.h \
-    Tools/ConstValue.h
+    Tools/ConstValue.h \
+    Tools/Dialog/AbstractTimeSelectionDialog.h \
+    Tools/Dialog/AutoCloseMessageBox.h \
+    Tools/Dialog/ConfirmDialog.h
 
 RESOURCES += \
     images.qrc

@@ -6,7 +6,7 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QGridLayout>
-#include "Tools.h"
+#include "../Tools.h"
 
 class ConfirmDialog : public QDialog {
     Q_OBJECT

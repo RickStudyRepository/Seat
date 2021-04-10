@@ -136,7 +136,10 @@ void AppointmentRecord::callContinueDialog(int rowNum) {
     int seatNum = appointments[rowNum].seatNum;
     AliasName::TimeScopes availableTimes;
     availableTimes.push_back(AliasName::TimeScope(21, 22));
-    continueTimeDialog->showContinueDialog(currentTimeScope, availableTimes);
+    // 设置当前选定的时间
+    continueTimeDialog->setCurrentTimeScope(currentTimeScope);
+    // 设置可用时间范围并呼出对话框
+    continueTimeDialog->setTimeScopeAndShow(availableTimes);
 }
 
 void AppointmentRecord::cancelAppointment() {

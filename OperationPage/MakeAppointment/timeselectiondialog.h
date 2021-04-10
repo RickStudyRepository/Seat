@@ -1,64 +1,34 @@
 #ifndef TIMESELECTIONDIALOG_H
 #define TIMESELECTIONDIALOG_H
 
-#include <QDialog>
-#include <QLabel>
 #include <QWidget>
-#include <QComboBox>
-#include <QPushButton>
-#include <QGridLayout>
+#include <QTime>
 #include "../../Tools/Tools.h"
 #include "../../Tools/AliasName.h"
+#include "../../Tools/Dialog/AbstractTimeSelectionDialog.h"
 
-class TimeSelectionDialog : public QDialog
+class TimeSelectionDialog : public AbstractTimeSelectionDialog
 {
     Q_OBJECT
 
 public:
     TimeSelectionDialog(QWidget* parent = NULL);
 
-    // 设置时间范围，实现对话框的复用
-    void setTimeScope(AliasName::TimeScopes availableTimes);
-
 private:
-    // 所有的可用时间
-    AliasName::TimeScopes availableTimes;
-    // 当前时间点是否有可用时间段
-    bool available;
-    // 标记用户是否选择了时间
-    bool isSelected;
-    // 整体布局
-    QGridLayout* layout = new QGridLayout(this);
-    // 开始时间下拉列表
-    QLabel* startTimeLabel = new QLabel(tr("开始时间"), this);
-    QComboBox* startTime = new QComboBox(this);
-    // 结束时间下拉列表
-    QLabel* endTimeLabel = new QLabel(tr("结束时间"), this);
-    QComboBox* endTime = new QComboBox(this);
-    // 确认按钮
-    QPushButton* okButton = new QPushButton(tr("确认"));
-    // 取消按钮
-    QPushButton* cancelButton = new QPushButton(tr("取消"));
-
-    // 初始化按钮
-    void initButton();
     // 初始化下拉列表
     void initComboBox();
-    // 初始化布局
-    void initLayout();
+
+    // 重置开始时间
+    void resetStartTime();
+
+    // 处理无可用时间的情况
+    void dealUnavailable();
+
+    bool isValid(AliasName::TimeScope selected, AliasName::TimeScope compare);
+
 private slots:
     // 动态调成结束时间下拉列表
     void resetEndTime();
-    // 检查选定的时间，合法则发送时间范围
-    void confirmTime();
-    // 取消选定时间
-    void cancel();
-
-signals:
-    // 若选择了一个合法的时间段
-    void sendTimeScope(AliasName::TimeScope timeScope);
-    // 没有选择一个时间段
-    void notSelectedTime();
 };
 
 #endif // TIMESELECTIONDIALOG_H

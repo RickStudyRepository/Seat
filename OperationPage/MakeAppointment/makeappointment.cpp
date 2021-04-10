@@ -51,8 +51,7 @@ void MakeAppointment::callTimeDialog(int seatNum) {
     test.push_back(AliasName::TimeScope(14, 22));
 
     // 设置对话框的可用时间段
-    timeDialog->setTimeScope(test);
-    timeDialog->show();
+    timeDialog->setTimeScopeAndShow(test);
 }
 
 void MakeAppointment::initConfirmDialog() {
