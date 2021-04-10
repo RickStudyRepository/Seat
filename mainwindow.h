@@ -4,16 +4,8 @@
 #include <QWidget>
 #include <QIcon>
 #include <QSize>
-#include <QLabel>
 #include <QString>
-#include <QPixmap>
-#include <QTabWidget>
 #include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QGridLayout>
-#include <QMouseEvent>
-#include <QPushButton>
-#include <QLineEdit>
 #include "Tools/ClickedableLabel.h"
 #include "HomePage/HomePage.h"
 #include "OperationPage/OperationPage.h"
