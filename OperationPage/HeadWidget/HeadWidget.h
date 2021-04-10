@@ -26,7 +26,7 @@ private:
     QGridLayout* layout = new QGridLayout(this);
 
 public:
-    explicit HeadWidget(QWidget *parent = nullptr)
+    explicit HeadWidget(QWidget *parent = NULL)
         : QWidget(parent)
     {
         returnHomePage->setIcon(QIcon(":/images/ReturnHomePage.svg"));

@@ -23,7 +23,7 @@ class MainWindow : public QWidget
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
+    MainWindow(QWidget *parent = NULL);
 
 private:
     // 窗口标题

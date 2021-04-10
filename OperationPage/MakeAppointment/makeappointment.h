@@ -14,7 +14,7 @@ class MakeAppointment : public QWidget
 {
     Q_OBJECT
 public:
-    explicit MakeAppointment(QWidget *parent = nullptr);
+    explicit MakeAppointment(QWidget *parent = NULL);
     // 让上层部件调用该方法隐藏对话框
     void hideDialog();
     // 设置预约人学号
@@ -38,7 +38,7 @@ private:
     // 被选中的座位的编号
     int selectedSeatNum = -1;
     // 选择的可用时间段
-    TimeScope timeScope = TimeScope(-1, -1);
+    AliasName::TimeScope timeScope = AliasName::TimeScope(-1, -1);
 
     // 初始化座位
     void initSeats();
@@ -57,7 +57,7 @@ private slots:
     // 呼出选择时间对话框
     void callTimeDialog(int seatNum);
     // 接收选择的时间段
-    void receiveTimeScope(TimeScope timeScope);
+    void receiveTimeScope(AliasName::TimeScope timeScope);
     // 向数据库写入预约信息
     void writeAppointmentToDatabase();
     // 重置座位号和选择的时间段

@@ -14,7 +14,7 @@ class SeatWidget : public QWidget
     Q_OBJECT
 
 public:
-    SeatWidget(QPixmap picture, int num, QWidget* parent = nullptr)
+    SeatWidget(QPixmap picture, int num, QWidget* parent = NULL)
         : QWidget(parent)
     {
         // 座位编号

@@ -7,6 +7,7 @@
 #include <QVBoxLayout>
 #include <QTabWidget>
 #include "MakeAppointment/MakeAppointment.h"
+#include "AppointmentRecord/AppointmentRecord.h"
 #include "HeadWidget/HeadWidget.h"
 
 class OperationPage : public QWidget
@@ -30,14 +31,14 @@ private:
     QString makeAppoinmentString = tr("现场预约");
 
     // 我的预约部件
-    QWidget* appointmentRecord = new QWidget(this);
+    AppointmentRecord* appointmentRecord = new AppointmentRecord(this);
     QString appointmentRecordString = tr("我的预约");
 
     // 初始化布局
     void initLayout();
 
 public:
-    explicit OperationPage(QWidget *parent = nullptr);
+    explicit OperationPage(QWidget *parent = NULL);
 
     void resetStudentNum(QString studentNum);
 

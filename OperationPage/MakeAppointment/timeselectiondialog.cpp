@@ -7,7 +7,9 @@ TimeSelectionDialog::TimeSelectionDialog(QWidget* parent)
     : QDialog(parent)
 {
     // 设置对话框大小
-    setFixedSize(290, 130);
+    setMinimumSize(290, 130);
+    // 设置为只能当前窗口活动
+    setWindowModality(Qt::ApplicationModal);
     // 绑定按钮槽函数
     initButton();
     // 初始化下拉列表
@@ -38,7 +40,7 @@ void TimeSelectionDialog::initLayout() {
     setLayout(layout);
 }
 
-void TimeSelectionDialog::setTimeScope(AvailableTimes availableTimes) {
+void TimeSelectionDialog::setTimeScope(AliasName::AvailableTimes availableTimes) {
     // 重置是否选择了时间段的标记
     isSelected = false;
     // 重置当前时间点是否有可用时间
@@ -57,9 +59,10 @@ void TimeSelectionDialog::setTimeScope(AvailableTimes availableTimes) {
     int start;
     int end;
     // 向开始时间下拉列表中添加可用时间
-    for (auto availableTime : availableTimes) {
-        start = availableTime.first;
-        end = availableTime.second;
+    size_t size = this->availableTimes.size();
+    for (size_t i = 0; i < size; i++) {
+        start = this->availableTimes[i].first;
+        end = this->availableTimes[i].second;
         while (start < end) {
             // 只有当时间在当前时间或当前时间之后才能添加到下拉列表中
             if (start >= currentHourInt) {
@@ -71,7 +74,9 @@ void TimeSelectionDialog::setTimeScope(AvailableTimes availableTimes) {
     }
     if (available == false) {
         startTime->addItem(QString(tr("无可用时间")));
+        startTime->setEnabled(false);
         endTime->addItem(QString(tr("无可用时间")));
+        endTime->setEnabled(false);
         // 无可用时间时禁用确认按钮
         okButton->setEnabled(false);
     }
@@ -90,9 +95,10 @@ void TimeSelectionDialog::resetEndTime() {
     int end;
     // 获取选中的开始时间
     int selectedStartTime = Tools::timeStringToInt(startTime->currentText());
-    for (auto availableTime : availableTimes) {
-        start = availableTime.first;
-        end = availableTime.second;
+    size_t size = this->availableTimes.size();
+    for (size_t i = 0; i < size; i++) {
+        start = this->availableTimes[i].first;
+        end = this->availableTimes[i].second;
         // 查找包含选中的开始时间的时间段
         if (selectedStartTime >= start && selectedStartTime < end) {
             // 定位到开始时间之后
@@ -114,19 +120,20 @@ void TimeSelectionDialog::confirmTime() {
     bool valid = false;
     int start = Tools::timeStringToInt(startTime->currentText());
     int end = Tools::timeStringToInt(endTime->currentText());
-    for (auto availableTime : availableTimes) {
+    size_t size = this->availableTimes.size();
+    for (size_t i = 0; i < size; i++) {
         // 检验选取的时间段是否是某一可用时间段的子区间
-        if (start < end && start >= availableTime.first && end <= availableTime.second) {
+        if (start < end && start >= this->availableTimes[i].first && end <= this->availableTimes[i].second) {
             valid = true;
             break;
         }
     }
-    // 若时间合法，则提示用户选择的时间
+    // 若时间合法，则发送时间范围
     if (valid == true) {
         // 标记选中了时间段
         isSelected = true;
         // 发送时间范围
-        emit sendTimeScope(TimeScope(start, end));
+        emit sendTimeScope(AliasName::TimeScope(start, end));
         qDebug() << "Send time scope";
         close();
     }

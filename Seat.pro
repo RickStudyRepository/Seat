@@ -28,7 +28,9 @@ SOURCES += \
     MainWindow.cpp \
     OperationPage/OperationPage.cpp \
     OperationPage/MakeAppointment/MakeAppointment.cpp \
-    OperationPage/MakeAppointment/TimeSelectionDialog.cpp
+    OperationPage/MakeAppointment/TimeSelectionDialog.cpp \
+    OperationPage/AppointmentRecord/AppointmentRecord.cpp \
+    OperationPage/AppointmentRecord/ContinueTimeDialog.cpp
 
 HEADERS += \
     MainWindow.h \
@@ -42,7 +44,11 @@ HEADERS += \
     OperationPage/MakeAppointment/MakeAppointment.h \
     OperationPage/MakeAppointment/SeatWidget.h \
     OperationPage/MakeAppointment/TimeSelectionDialog.h \
-    Tools/AliasName.h
+    Tools/AliasName.h \
+    OperationPage/AppointmentRecord/OperationAndStatus.h \
+    OperationPage/AppointmentRecord/AppointmentRecord.h \
+    OperationPage/AppointmentRecord/ContinueTimeDialog.h \
+    Tools/ConstValue.h
 
 RESOURCES += \
     images.qrc

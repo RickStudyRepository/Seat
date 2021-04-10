@@ -10,7 +10,7 @@ class ClickedableLabel : public QLabel
     Q_OBJECT
 
 public:
-    ClickedableLabel(QWidget* parent = nullptr)
+    ClickedableLabel(QWidget* parent = NULL)
         : QLabel(parent)
     {
 

@@ -1,5 +1,5 @@
-#ifndef TIMESELECTIONDIALOG_H
-#define TIMESELECTIONDIALOG_H
+#ifndef CONTINUETIMEDIALOG_H
+#define CONTINUETIMEDIALOG_H
 
 #include <QDialog>
 #include <QLabel>
@@ -10,17 +10,19 @@
 #include "../../Tools/Tools.h"
 #include "../../Tools/AliasName.h"
 
-class TimeSelectionDialog : public QDialog
+class ContinueTimeDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    TimeSelectionDialog(QWidget* parent = NULL);
+    ContinueTimeDialog(QWidget* parent = NULL);
 
-    // 设置时间范围，实现对话框的复用
-    void setTimeScope(AliasName::AvailableTimes availableTimes);
+    // 展示续约对话框
+    void showContinueDialog(AliasName::TimeScope timeScope, AliasName::AvailableTimes availableTimes);
 
 private:
+    // 当前选定的时间范围
+    AliasName::TimeScope currentTimeScope;
     // 所有的可用时间
     AliasName::AvailableTimes availableTimes;
     // 当前时间点是否有可用时间段
@@ -42,13 +44,14 @@ private:
 
     // 初始化按钮
     void initButton();
-    // 初始化下拉列表
-    void initComboBox();
     // 初始化布局
     void initLayout();
-private slots:
+    // 设置开始时间
+    void resetStartTime();
     // 动态调成结束时间下拉列表
     void resetEndTime();
+
+private slots:
     // 检查选定的时间，合法则发送时间范围
     void confirmTime();
     // 取消选定时间
@@ -61,4 +64,4 @@ signals:
     void notSelectedTime();
 };
 
-#endif // TIMESELECTIONDIALOG_H
+#endif // CONTINUETIMEDIALOG_H

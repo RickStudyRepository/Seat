@@ -1,4 +1,5 @@
 #include "OperationPage.h"
+#include "../Tools/ConstValue.h"
 
 OperationPage::OperationPage(QWidget *parent) : QWidget(parent)
 {
@@ -30,11 +31,20 @@ void OperationPage::gotoFront(QString studentNum) {
     resetStudentNum(studentNum);
     operationTab->setCurrentIndex(0);
     headWidget->startCountDown();
+
+    // TODO:call database here
+    // 获取相应学号的学生的所有预约记录
+    AliasName::Appointments appointments;
+    appointments.push_back(AliasName::Appointment("181110305", 23, "2020-04-09 08:00-09:00", ConstValue::UsedSeat));
+    appointments.push_back(AliasName::Appointment("181110305", 34, "2020-04-09 18:00-21:00", ConstValue::UsingSeat));
+    appointmentRecord->resetAppointments(appointments);
+
     show();
 }
 
 void OperationPage::gotoBack() {
     makeAppoinment->hideDialog();
+    appointmentRecord->hideDialog();
     headWidget->stopCountDown();
     hide();
 }
@@ -42,6 +52,7 @@ void OperationPage::gotoBack() {
 void OperationPage::resetStudentNum(QString studentNum) {
     headWidget->resetLogInLabelText(studentNum);
     makeAppoinment->resetStudentNum(studentNum);
+    appointmentRecord->resetStudentNum(studentNum);
 }
 
 void OperationPage::emitReturnHomePage() {

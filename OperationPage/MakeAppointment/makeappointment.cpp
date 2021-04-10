@@ -36,7 +36,7 @@ void MakeAppointment::initLayout() {
 void MakeAppointment::initTimeDialog() {
     timeDialog->setWindowTitle(selectTimeString);
     // 接收选定的时间范围
-    connect(timeDialog, SIGNAL(sendTimeScope(TimeScope)), this, SLOT(receiveTimeScope(TimeScope)));
+    connect(timeDialog, SIGNAL(sendTimeScope(AliasName::TimeScope)), this, SLOT(receiveTimeScope(AliasName::TimeScope)));
     // 接收是否选择了时间段
     connect(timeDialog, SIGNAL(notSelectedTime()), this, SLOT(resetSeatAndTimeScope()));
 }
@@ -46,9 +46,9 @@ void MakeAppointment::callTimeDialog(int seatNum) {
     selectedSeatNum = seatNum;
     // TODO: call database here
     // 这里需要使用数据库获取该座位的可用时间段
-    AvailableTimes test;
-    test.push_back(TimeScope(8, 12));
-    test.push_back(TimeScope(14, 22));
+    AliasName::AvailableTimes test;
+    test.push_back(AliasName::TimeScope(8, 12));
+    test.push_back(AliasName::TimeScope(14, 22));
 
     // 设置对话框的可用时间段
     timeDialog->setTimeScope(test);
@@ -58,6 +58,8 @@ void MakeAppointment::callTimeDialog(int seatNum) {
 void MakeAppointment::initConfirmDialog() {
     // 确认预约之后向数据库写入预约信息
     connect(confirmDialog, SIGNAL(confirmed()), this, SLOT(writeAppointmentToDatabase()));
+    confirmDialog->setWindowTitle(tr("确认预约"));
+    confirmDialog->setConfirmButtonText(tr("我要预约"));
 }
 
 void MakeAppointment::callConfirmDialog() {
@@ -84,7 +86,7 @@ void MakeAppointment::hideDialog() {
     resetSeatAndTimeScope();
 }
 
-void MakeAppointment::receiveTimeScope(TimeScope timeScope) {
+void MakeAppointment::receiveTimeScope(AliasName::TimeScope timeScope) {
     // 接收时间段
     this->timeScope = timeScope;
     // 询问用户是否确认预约
@@ -110,5 +112,5 @@ void MakeAppointment::writeAppointmentToDatabase() {
 void MakeAppointment::resetSeatAndTimeScope() {
     // 若呼出选择时间对话框而没有选择时间段，则重置选中的编号和选中的时间段
     selectedSeatNum = -1;
-    timeScope = TimeScope(-1, -1);
+    timeScope = AliasName::TimeScope(-1, -1);
 }
