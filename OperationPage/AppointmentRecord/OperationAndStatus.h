@@ -8,6 +8,7 @@
 #include <QFrame>
 #include <string>
 #include "../../Tools/ConstValue.h"
+#include "../../Tools/FontFactory.h"
 
 class OperationAndStatus : public QWidget {
     Q_OBJECT
@@ -56,6 +57,7 @@ public:
     {
         this->rowNum = rowNum;
         initLayout(status);
+        setFont(FontFactory::tableContentFont());
     }
 
     // 在用户通过操作进行了修改之后，变更操作或状态中的内容

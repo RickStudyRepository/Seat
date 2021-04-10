@@ -7,6 +7,7 @@
 #include <QPushButton>
 #include <QGridLayout>
 #include "../Tools.h"
+#include "../FontFactory.h"
 
 class ConfirmDialog : public QDialog {
     Q_OBJECT
@@ -24,7 +25,7 @@ public:
         connect(cancelButton, SIGNAL(released()), this, SLOT(close()));
 
         // 窗体属性设置
-        setFixedSize(290, 130);
+        setMinimumSize(290, 130);
         // 设置为只能当前窗口活动
         setWindowModality(Qt::ApplicationModal);
 
@@ -32,6 +33,8 @@ public:
         layout->addWidget(confirmButton, 1, 0, 1, 1);
         layout->addWidget(cancelButton, 1, 1, 1, 1);
         setLayout(layout);
+
+        setFont(FontFactory::dialogFont());
     }
 
     void setConfirmButtonText(QString text) {

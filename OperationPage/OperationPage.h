@@ -6,6 +6,7 @@
 #include <QString>
 #include <QVBoxLayout>
 #include <QTabWidget>
+#include <QFrame>
 #include "MakeAppointment/MakeAppointment.h"
 #include "AppointmentRecord/AppointmentRecord.h"
 #include "HeadWidget/HeadWidget.h"
@@ -21,6 +22,10 @@ private:
 
     // 操作界面顶部部件
     HeadWidget* headWidget = new HeadWidget(this);
+
+    // 头部和操作之间的分割线
+    QFrame* horizontalLine = new QFrame(this);
+    void initHorizontalLine();
 
     // 操作部件容纳Tab
     QTabWidget* operationTab = new QTabWidget(this);

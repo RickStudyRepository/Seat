@@ -52,7 +52,8 @@ HEADERS += \
     Tools/Dialog/AbstractTimeSelectionDialog.h \
     Tools/Dialog/AutoCloseMessageBox.h \
     Tools/Dialog/ConfirmDialog.h \
-    HomePage/AdminLabel.h
+    HomePage/AdminLabel.h \
+    Tools/FontFactory.h
 
 RESOURCES += \
     images.qrc

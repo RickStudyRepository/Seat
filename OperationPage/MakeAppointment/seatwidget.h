@@ -8,6 +8,7 @@
 #include <QChar>
 #include <QVBoxLayout>
 #include "../../Tools/ClickedableLabel.h"
+#include "../../Tools/FontFactory.h"
 
 class SeatWidget : public QWidget
 {
@@ -28,11 +29,12 @@ public:
         numLabel->setText(QString("%1").arg(num, 3, 10, QChar('0')));
         // 设置座位编号为水平垂直居中
         numLabel->setAlignment(Qt::AlignCenter);
+        numLabel->setFont(FontFactory::seatNumFont());
         QVBoxLayout* layout = new QVBoxLayout(this);
         layout->addWidget(photoLabel);
         layout->addWidget(numLabel);
         layout->setMargin(0);
-        layout->setSpacing(5);
+        layout->setSpacing(0);
         setLayout(layout);
         // 固定部件大小
         setFixedSize(100, 130);

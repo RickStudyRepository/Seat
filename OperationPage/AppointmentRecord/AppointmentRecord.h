@@ -31,6 +31,8 @@ private:
     QTableWidget* appointmentRecord = new QTableWidget(this);
     // 初始化表格格式
     void initAppointmentRecord();
+    // 调整单元格格式
+    void formatTableItem(QTableWidgetItem* item);
 
     // 确认取消预约对话框
     ConfirmDialog* confirmDialog = new ConfirmDialog(this);

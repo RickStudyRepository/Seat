@@ -1,6 +1,5 @@
 #include "AbstractTimeSelectionDialog.h"
-
-
+#include "../FontFactory.h"
 
 AbstractTimeSelectionDialog::AbstractTimeSelectionDialog(QWidget *parent)
     : QDialog(parent)
@@ -15,6 +14,8 @@ AbstractTimeSelectionDialog::AbstractTimeSelectionDialog(QWidget *parent)
     initLayout();
     // 初始化消息提示框
     initAutoCloseMessageBox();
+    // 设置字体
+    setFont(FontFactory::dialogFont());
     // 若关闭窗口，则发送未选择时间段信号
     connect(this, SIGNAL(finished(int)), this, SLOT(cancel()));
 }

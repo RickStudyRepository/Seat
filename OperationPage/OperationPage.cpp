@@ -1,18 +1,33 @@
 #include "OperationPage.h"
 #include "../Tools/ConstValue.h"
+#include "../Tools/FontFactory.h"
+#include <QPalette>
+#include <QColor>
 
 OperationPage::OperationPage(QWidget *parent) : QWidget(parent)
 {
     initOperationTab();
+    initHorizontalLine();
     initLayout();
     connect(headWidget, SIGNAL(returnHomePageSignal()), this, SLOT(emitReturnHomePage()));
 }
 
 void OperationPage::initLayout() {
     layout->addWidget(headWidget);
+    layout->addWidget(horizontalLine);
     layout->addWidget(operationTab);
     layout->setMargin(0);
+    layout->setAlignment(Qt::AlignCenter);
     setLayout(layout);
+}
+
+void OperationPage::initHorizontalLine() {
+    horizontalLine->setFrameStyle(QFrame::HLine);
+    horizontalLine->setLineWidth(2);
+    horizontalLine->setFixedWidth(494);
+    QPalette temp = horizontalLine->palette();
+    temp.setColor(QPalette::WindowText, QColor(63, 81, 181));
+    horizontalLine->setPalette(temp);
 }
 
 void OperationPage::initOperationTab() {
@@ -25,6 +40,7 @@ void OperationPage::initOperationTab() {
     operationTab->addTab(appointmentRecord, appointmentRecordString);
     // 默认展示“开始预约”操作界面
     operationTab->setCurrentIndex(0);
+    operationTab->setFont(FontFactory::describeFont());
 }
 
 void OperationPage::gotoFront(QString studentNum) {

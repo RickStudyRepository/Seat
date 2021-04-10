@@ -1,7 +1,6 @@
 #include "MakeAppointment.h"
 #include "../../Tools/AliasName.h"
 #include "../../Tools/Tools.h"
-#include <QMessageBox>
 #include <QDebug>
 
 MakeAppointment::MakeAppointment(QWidget *parent) : QWidget(parent) {
@@ -12,7 +11,8 @@ MakeAppointment::MakeAppointment(QWidget *parent) : QWidget(parent) {
 
     // 设置滚动区域
     scrollArea->setWidget(makeAppointment);
-    scrollArea->setFixedSize(795, 417);
+    // 设置最大的大小
+    scrollArea->setFixedSize(795, 387);
 }
 
 void MakeAppointment::initSeats() {
@@ -28,7 +28,7 @@ void MakeAppointment::initSeats() {
 }
 
 void MakeAppointment::initLayout() {
-    layout->setSpacing(11);
+    layout->setSpacing(10);
     layout->setMargin(2);
     makeAppointment->setLayout(layout);
 }

@@ -5,6 +5,7 @@
 #include <QTimer>
 #include <QCloseEvent>
 #include <QMessageBox>
+#include "../FontFactory.h"
 
 class AutoCloseMessageBox : public QMessageBox {
     Q_OBJECT
@@ -13,6 +14,7 @@ public:
     AutoCloseMessageBox(QWidget* parent = NULL)
         : QMessageBox(parent) {
         connect(timer, SIGNAL(timeout()), this, SLOT(autoClose()));
+        setFont(FontFactory::dialogFont());
     }
 
     void showAndClose(int seconds, QString title, QString text) {

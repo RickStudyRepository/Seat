@@ -3,6 +3,7 @@
 #include <QChar>
 #include "OperationAndStatus.h"
 #include "../../Tools/ConstValue.h"
+#include "../../Tools/FontFactory.h"
 #include <QDebug>
 
 AppointmentRecord::AppointmentRecord(QWidget *parent) : QWidget(parent)
@@ -40,11 +41,13 @@ void AppointmentRecord::initAppointmentRecord() {
     // 设置列宽为固定列宽
     // TODO:这里移植时可能需要修改
     appointmentRecord->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
+    // 设置表头字体
+    appointmentRecord->horizontalHeader()->setFont(FontFactory::tableHeaderFont());
 
     // 调整表头格式
     QHeaderView* head = appointmentRecord->horizontalHeader();
-    // 设置对齐方式
-    head->setDefaultAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    // 设置对齐方式为水平垂直居中
+    head->setDefaultAlignment(Qt::AlignCenter);
     // 点击表头，表头不高亮
     head->setHighlightSections(false);
     // 不允许表头移动
@@ -52,11 +55,9 @@ void AppointmentRecord::initAppointmentRecord() {
     // 设置修改后的表头格式
     appointmentRecord->setHorizontalHeader(head);
     // 表头文本
-    headStringList << tr("座位号") << tr("时间") << tr("状态   |   操作");
+    headStringList << tr("座位号") << tr("时间") << tr("状态  |  操作");
     // 设置水平表头
     appointmentRecord->setHorizontalHeaderLabels(headStringList);
-    // 单独设置状态或操作表头为居中对齐
-    appointmentRecord->horizontalHeaderItem(2)->setTextAlignment(Qt::AlignCenter);
 
     // 设置表格的其他属性
     // 设置表格不可编辑
@@ -98,14 +99,12 @@ void AppointmentRecord::resetAppointments(AliasName::Appointments appointments) 
     for (size_t i = 0; i < appointmentsNum; i++) {
         // 座位号
         temp = new QTableWidgetItem(QString("%1").arg(this->appointments[i].seatNum, 3, 10, QChar('0')));
-        // 将座位号设置为靠右对齐，并垂直居中
-        temp->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+        formatTableItem(temp);
         appointmentRecord->setItem(i, 0, temp);
 
         // 时间
         temp = new QTableWidgetItem(QString::fromStdString(this->appointments[i].time));
-        // 将预约时间设置为靠右对齐，并垂直居中
-        temp->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+        formatTableItem(temp);
         appointmentRecord->setItem(i, 1, temp);
 
         // 操作或状态
@@ -114,6 +113,13 @@ void AppointmentRecord::resetAppointments(AliasName::Appointments appointments) 
         connect(tempOS, SIGNAL(continueSignal(int)), this, SLOT(callContinueDialog(int)));
         appointmentRecord->setCellWidget(i, 2, tempOS);
     }
+}
+
+void AppointmentRecord::formatTableItem(QTableWidgetItem *item) {
+    // 设置对齐方式为水平垂直居中
+    item->setTextAlignment(Qt::AlignCenter);
+    // 设置字体
+    item->setFont(FontFactory::tableContentFont());
 }
 
 void AppointmentRecord::callConfirmDialog(int rowNum) {

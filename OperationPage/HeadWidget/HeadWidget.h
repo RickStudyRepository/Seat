@@ -8,6 +8,7 @@
 #include <QGridLayout>
 #include <QIcon>
 #include "CountDown.h"
+#include "../../Tools/FontFactory.h"
 
 class HeadWidget : public QWidget
 {
@@ -35,8 +36,9 @@ public:
         layout->addWidget(logInLabel, 0, 0, 1, 6);
         layout->addWidget(countDown, 0, 7, 1, 1);
         layout->addWidget(returnHomePage, 0, 8, 1, 1);
-        layout->setMargin(0);
+        layout->setMargin(4);
         setLayout(layout);
+        setFont(FontFactory::describeFont());
     }
 
     void resetLogInLabelText(QString studentNum) {
