@@ -35,6 +35,21 @@ namespace AliasName {
     } Appointment;
     // 预约信息列表
     typedef std::vector<Appointment> Appointments;
+
+    // 座位信息
+    typedef struct SeatInfo {
+        int num;
+        TimeScopes availableTimes;
+
+        SeatInfo(int num, TimeScopes availableTimes) {
+            this->num = num;
+            this->availableTimes = availableTimes;
+        }
+
+        bool hasAvailableTimeScope() {
+            return this->availableTimes.empty();
+        }
+    } SeatInfo;
 }
 
 #endif // ALIASNAME_H
