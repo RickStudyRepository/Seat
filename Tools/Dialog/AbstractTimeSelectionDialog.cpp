@@ -66,7 +66,6 @@ void AbstractTimeSelectionDialog::verifyTimeScope() {
     size_t size = this->availableTimes.size();
     for (size_t i = 0; i < size; i++) {
         // 检验选取的时间段是否是某一可用时间段的子区间
-        //            if (start < end && start >= this->availableTimes[i].first && end <= this->availableTimes[i].second) {
         if (isValid(AliasName::TimeScope(start, end), availableTimes[i]) == true) {
             valid = true;
             break;

@@ -20,6 +20,17 @@ public:
         return font;
     }
 
+    // 表格操作或状态字体
+    static QFont tableOperationAndStatusFont(std::string status) {
+        QFont font;
+        font.setPointSize(ConstValue::TableContentFontSize);
+        // 已失约或已履约都加粗强调一下
+        if (status == ConstValue::UnusedSeat || status == ConstValue::UsedSeat) {
+            font.setBold(true);
+        }
+        return font;
+    }
+
     // 构造对话框字体
     static QFont dialogFont() {
         QFont font;
@@ -27,6 +38,7 @@ public:
         return font;
     }
 
+    // 座位号字体
     static QFont seatNumFont() {
         QFont font;
         font.setPointSize(ConstValue::SeatNumFontSize);

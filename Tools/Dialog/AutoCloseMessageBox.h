@@ -14,6 +14,7 @@ public:
     AutoCloseMessageBox(QWidget* parent = NULL)
         : QMessageBox(parent) {
         connect(timer, SIGNAL(timeout()), this, SLOT(autoClose()));
+        connect(this, SIGNAL(finished(int)), timer, SLOT(stop()));
         setFont(FontFactory::dialogFont());
     }
 
@@ -26,11 +27,6 @@ public:
 
 private:
     QTimer* timer = new QTimer(this);
-
-    // 被关闭之后停止定时器
-    void closeEvent(QCloseEvent* event) {
-        timer->stop();
-    }
 
 public slots:
     void autoClose() {

@@ -6,6 +6,7 @@
 #include <QHBoxLayout>
 #include <QString>
 #include <QFrame>
+#include <QPalette>
 #include <string>
 #include "../../Tools/ConstValue.h"
 #include "../../Tools/FontFactory.h"
@@ -43,7 +44,16 @@ private:
         }
         // 已履约或已失约，则直接放入状态对应的文本
         else {
-            statusLabel = new QLabel(tr(status.c_str()), this);
+            statusLabel = new QLabel(this);
+            if (status == ConstValue::UnusedSeat) {
+                // 设置已失约为红色，突出显示
+                statusLabel->setStyleSheet("color:red;");
+            }
+            else {
+                // 设置已履约为绿色，突出显示
+                statusLabel->setStyleSheet("color:green");
+            }
+            statusLabel->setText(tr(status.c_str()));
             layout->addWidget(statusLabel);
         }
         layout->setSpacing(5);
@@ -56,8 +66,8 @@ public:
         : QWidget(parent)
     {
         this->rowNum = rowNum;
+        setFont(FontFactory::tableOperationAndStatusFont(status));
         initLayout(status);
-        setFont(FontFactory::tableContentFont());
     }
 
     // 在用户通过操作进行了修改之后，变更操作或状态中的内容
