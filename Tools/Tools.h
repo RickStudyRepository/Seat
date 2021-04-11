@@ -3,6 +3,7 @@
 
 #include <QString>
 #include <cstdlib>
+#include <vector>
 #include "AliasName.h"
 
 class Tools {
@@ -43,6 +44,41 @@ public:
      */
     static int stringToInt(std::string str) {
         return atoi(str.c_str());
+    }
+
+    /**
+     * @brief stringSplit, 将输入字符串str根据splitter进行拆分，不会产生空串
+     * @param splitter: char, 分隔符
+     * @param str: std::string, 待分隔的字符串
+     * @return 分隔出的字符串数组
+     */
+    static std::vector<std::string> stringSplit(std::string str, char splitter = ',') {
+        std::vector<std::string> result;
+        std::string temp;
+        // 搜索出的最新的分隔符位置
+        size_t splitterIndex = 0;
+        // 下一个子串的起始位置
+        size_t startIndex = 0;
+        do {
+            // 从下一子串开始的位置查找
+            splitterIndex = str.find(splitter, startIndex);
+            if (splitterIndex != str.npos) {
+                // 获取被分割出的字符串
+                temp = str.substr(startIndex, splitterIndex - startIndex);
+                // 不保留空串
+                if (temp != "") {
+                    result.push_back(temp);
+                }
+                // 更新下一子串的起始位置为本次分隔符位置的下一个字符
+                startIndex = splitterIndex + 1;
+            }
+        } while (splitterIndex != str.npos);
+        // 检查最后一个分隔符后剩余的子串
+        temp = str.substr(startIndex);
+        if (temp != "") {
+            result.push_back(temp);
+        }
+        return result;
     }
 };
 
