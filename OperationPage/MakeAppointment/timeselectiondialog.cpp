@@ -78,6 +78,12 @@ void TimeSelectionDialog::dealUnavailable() {
         // 无可用时间时禁用确认按钮
         okButton->setEnabled(false);
     }
+    // 如果有空余时间就设置为可用，算是一种复位
+    else {
+        okButton->setEnabled(true);
+        startTime->setEnabled(true);
+        endTime->setEnabled(true);
+    }
 }
 
 bool TimeSelectionDialog::isValid(AliasName::TimeScope selected, AliasName::TimeScope compare) {

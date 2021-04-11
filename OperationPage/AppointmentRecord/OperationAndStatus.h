@@ -89,7 +89,17 @@ public:
             verticalLine = NULL;
             continueLabel = NULL;
             // 设置状态标签
-            statusLabel = new QLabel(tr(status.c_str()), this);
+            statusLabel = new QLabel(this);
+            if (status == ConstValue::UnusedSeat) {
+                // 设置已失约为红色，突出显示
+                statusLabel->setStyleSheet("color:red;");
+            }
+            else {
+                // 设置已履约为绿色，突出显示
+                statusLabel->setStyleSheet("color:green");
+            }
+            statusLabel->setText(tr(status.c_str()));
+            statusLabel->setFont(FontFactory::tableOperationAndStatusFont(status));
             layout->addWidget(statusLabel);
         }
     }

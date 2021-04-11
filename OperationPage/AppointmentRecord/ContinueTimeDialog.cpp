@@ -23,6 +23,11 @@ void ContinueTimeDialog::dealUnavailable() {
         endTime->setEnabled(false);
         okButton->setEnabled(false);
     }
+    // 如果有可用时间，则进行复位
+    else {
+        endTime->setEnabled(true);
+        okButton->setEnabled(true);
+    }
 }
 
 void ContinueTimeDialog::resetEndTime() {
