@@ -2,6 +2,7 @@
 #define TOOLS_H
 
 #include <QString>
+#include <QDate>
 #include <cstdlib>
 #include <vector>
 #include "AliasName.h"
@@ -34,6 +35,14 @@ public:
         int start = Tools::timeStringToInt(QString::fromStdString(time.substr(11, 2)));
         int end = Tools::timeStringToInt(QString::fromStdString(time.substr(17, 2)));
         return AliasName::TimeScope(start, end);
+    }
+
+    /**
+     * @brief getCurrentDate, 获取当前日期的"YYYY-MM-DD"表示字符串
+     * @return
+     */
+    static std::string getCurrentDate() {
+        return QDate::currentDate().toString(QString("YYYY-MM-DD")).toStdString();
     }
 
     /**

@@ -96,13 +96,26 @@ void MakeAppointment::resetStudentNum(QString studentNum) {
 }
 
 void MakeAppointment::writeAppointmentToDatabase() {
+    // 构造新的预约记录
+    AliasName::Appointment newAppointment(
+        studentNum.toStdString(),
+        selectedSeatNum,
+        Tools::getCurrentDate() +
+        " " +
+        Tools::intToTimeString(timeScope.first).toStdString() +
+        "-" +
+        Tools::intToTimeString(timeScope.second).toStdString(),
+        ConstValue::UsingSeat
+    );
+    // TODO:call database here
     qDebug() << "向数据库写入预约信息：\n"
              << "预约人：" << studentNum << "\n"
              << "座位号：" << selectedSeatNum << "\n"
              << "时间段："
              << Tools::intToTimeString(timeScope.first)
              << "-"
-             << Tools::intToTimeString(timeScope.second);
+             << Tools::intToTimeString(timeScope.second) << "\n"
+             << "状态：" << QString::fromStdString(ConstValue::UsingSeat);
     // 重置座位号和时间段
     resetSeatAndTimeScope();
 }

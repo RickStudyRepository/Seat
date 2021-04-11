@@ -12,21 +12,23 @@ namespace AliasName {
 
     // 一条预约信息
     typedef struct Appointment {
+        unsigned int id;
         std::string studentNum;
-        int seatNum;
+        unsigned int seatNum;
         std::string time;
         std::string status;
 
-        // 向数据库写入数据时需要完全构造
-        Appointment(std::string studentNum, int seatNum, std::string time, std::string status) {
+        // 向数据库写入数据时不需要id，id由数据库操作生成
+        Appointment(std::string studentNum, unsigned int seatNum, std::string time, std::string status) {
             this->studentNum = studentNum;
             this->seatNum = seatNum;
             this->time = time;
             this->status = status;
         }
 
-        // 从数据库中取出某一个同学的预约信息，可以缺省构造
-        Appointment(int seatNum, std::string time, std::string status) {
+        // 从数据库中取出某一个同学的预约信息，可以缺省构造学号
+        Appointment(unsigned int id, unsigned int seatNum, std::string time, std::string status) {
+            this->id = id;
             this->studentNum = "";
             this->seatNum = seatNum;
             this->time = time;

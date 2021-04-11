@@ -49,7 +49,7 @@ public:
     // 重置预约人学号
     void resetStudentNum(QString studentNum);
     // 重置预约列表及表格内容
-    void resetAppointments(AliasName::Appointments appointments);
+    void resetAppointments();
     // 隐藏可能打开的对话框
     void hideDialog();
 

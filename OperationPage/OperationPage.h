@@ -55,6 +55,8 @@ public slots:
     void gotoFront(QString studentNum);
     // 隐藏操作界面
     void gotoBack();
+    // 载入学号为studentNum的预约信息
+    void loadAppointments(int index);
     // 释放返回主界面的信号
     void emitReturnHomePage();
 };
