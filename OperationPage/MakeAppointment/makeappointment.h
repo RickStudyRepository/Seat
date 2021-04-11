@@ -27,8 +27,6 @@ private:
     QGridLayout* layout = new QGridLayout(this);
     // 使用一个可滚动的区域
     QScrollArea* scrollArea = new QScrollArea(this);
-    // 时间选择对话框
-    QString selectTimeString = tr("选择时间");
     TimeSelectionDialog* timeDialog = new TimeSelectionDialog(this);
     // 确认预约对话框
     ConfirmDialog* confirmDialog = new ConfirmDialog(this);

@@ -3,7 +3,7 @@
 ContinueTimeDialog::ContinueTimeDialog(QWidget *parent)
     : AbstractTimeSelectionDialog(parent)
 {
-
+    setWindowTitle(tr("选择续约结束时间"));
 }
 
 void ContinueTimeDialog::setCurrentTimeScope(AliasName::TimeScope currentTimeScope) {

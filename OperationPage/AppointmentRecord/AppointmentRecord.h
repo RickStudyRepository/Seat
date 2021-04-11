@@ -41,6 +41,7 @@ private:
 
     // 续约对话框
     ContinueTimeDialog* continueTimeDialog = new ContinueTimeDialog(this);
+    void initContinueDialog();
     int continueNum;
 
 public:
@@ -62,6 +63,8 @@ public slots:
     void cancelAppointment();
     // 让用户选择续约结束时间
     void callContinueDialog(int rowNum);
+    // 续约，延长预约时间
+    void continueAppointment(AliasName::TimeScope continueTimeScope);
 };
 
 #endif // APPOINTMENTRECORD_H

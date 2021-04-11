@@ -78,7 +78,7 @@ void AbstractTimeSelectionDialog::verifyTimeScope() {
         isSelected = true;
         // 发送时间范围
         emit sendTimeScope(AliasName::TimeScope(start, end));
-        qDebug() << "Send time scope";
+        qDebug() << "Send time scope:" << start << "," << end;
         close();
     }
     else {

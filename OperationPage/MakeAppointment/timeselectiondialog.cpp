@@ -7,6 +7,7 @@ TimeSelectionDialog::TimeSelectionDialog(QWidget *parent)
 {
     // 初始化下拉列表
     initComboBox();
+    setWindowTitle(tr("选择预约时间"));
 }
 
 void TimeSelectionDialog::initComboBox() {

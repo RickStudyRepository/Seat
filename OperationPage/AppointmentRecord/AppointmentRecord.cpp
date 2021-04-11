@@ -10,6 +10,7 @@ AppointmentRecord::AppointmentRecord(QWidget *parent) : QWidget(parent)
 {
     initAppointmentRecord();
     initConfirmDialog();
+    initContinueDialog();
     initLayout();
 }
 
@@ -70,6 +71,15 @@ void AppointmentRecord::initConfirmDialog() {
     confirmDialog->setWindowTitle(tr("确认取消预约"));
     confirmDialog->setConfirmButtonText(tr("我要取消"));
     connect(confirmDialog, SIGNAL(confirmed()), this, SLOT(cancelAppointment()));
+}
+
+void AppointmentRecord::initContinueDialog() {
+    connect(
+        continueTimeDialog,
+        SIGNAL(sendTimeScope(AliasName::TimeScope)),
+        this,
+        SLOT(continueAppointment(AliasName::TimeScope))
+    );
 }
 
 void AppointmentRecord::hideDialog() {
@@ -133,6 +143,17 @@ void AppointmentRecord::callConfirmDialog(int rowNum) {
     confirmDialog->setTextAndShow(tr(text.c_str()));
 }
 
+void AppointmentRecord::cancelAppointment() {
+    qDebug() << "Cancel appointment";
+    // 更新数据库及内存中保存的数据
+    // call database here
+
+    // 更新界面
+    // 获取相应单元格的部件并强转为OperationAndStatus类型，进而重置标签内容
+    QWidget* temp = appointmentRecord->cellWidget(cancelRowNum, 2);
+    qobject_cast<OperationAndStatus*>(temp)->resetOperationAndStatus(ConstValue::UsedSeat);
+}
+
 void AppointmentRecord::callContinueDialog(int rowNum) {
     continueNum = rowNum;
     // 获取对应预约的预约时间范围
@@ -148,13 +169,14 @@ void AppointmentRecord::callContinueDialog(int rowNum) {
     continueTimeDialog->setTimeScopeAndShow(availableTimes);
 }
 
-void AppointmentRecord::cancelAppointment() {
-    qDebug() << "Cancel appointment";
-    // 更新数据库及内存中保存的数据
-    // call database here
-
-    // 更新界面
-    // 获取相应单元格的部件并强转为OperationAndStatus类型，进而重置标签内容
-    QWidget* temp = appointmentRecord->cellWidget(cancelRowNum, 2);
-    qobject_cast<OperationAndStatus*>(temp)->resetOperationAndStatus(ConstValue::UsedSeat);
+void AppointmentRecord::continueAppointment(AliasName::TimeScope continueTimeScope) {
+    std::string newTime = appointments[continueNum].time;
+    // 更新内存中的结束时间
+    newTime.replace(17, 5, Tools::intToTimeString(continueTimeScope.second).toStdString());
+    appointments[continueNum].time = newTime;
+    // 更新表格内容
+    // TODO:这里为什么不能使用itemAt方法获取相应的单元格内容呢
+    appointmentRecord->item(continueNum, 1)->setText(tr(newTime.c_str()));
+    // 更新数据库的结束时间
+    // TODO:call database here
 }

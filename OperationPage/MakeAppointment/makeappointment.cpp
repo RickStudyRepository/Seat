@@ -34,7 +34,6 @@ void MakeAppointment::initLayout() {
 }
 
 void MakeAppointment::initTimeDialog() {
-    timeDialog->setWindowTitle(selectTimeString);
     // 接收选定的时间范围
     connect(timeDialog, SIGNAL(sendTimeScope(AliasName::TimeScope)), this, SLOT(receiveTimeScope(AliasName::TimeScope)));
     // 接收是否选择了时间段
