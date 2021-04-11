@@ -15,6 +15,8 @@ class OperationPage : public QWidget
 {
     Q_OBJECT
 private:
+    // TODO:之后要增加一个是否已经登录的标记
+    bool logIn = false;
     // 顶层部件
     QWidget* operationPage = new QWidget(this);
     // 布局

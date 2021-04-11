@@ -4,6 +4,7 @@
 #include "OperationAndStatus.h"
 #include "../../Tools/ConstValue.h"
 #include "../../Tools/FontFactory.h"
+#include "../../Database/Database.h"
 #include <QDebug>
 
 AppointmentRecord::AppointmentRecord(QWidget *parent) : QWidget(parent)
@@ -99,9 +100,7 @@ void AppointmentRecord::resetStudentNum(QString studentNum) {
 void AppointmentRecord::resetAppointments() {
     // TODO:call database here
     // 获取相应学号的学生的所有预约记录
-    AliasName::Appointments appointments;
-    appointments.push_back(AliasName::Appointment(1, 23, "2020-04-09 08:00-09:00", ConstValue::UsedSeat));
-    appointments.push_back(AliasName::Appointment(2, 34, "2020-04-09 18:00-21:00", ConstValue::UsingSeat));
+    AliasName::Appointments appointments = Database::getAllAppointmentsOf(studentNum.toStdString());
 
     // 更新预约列表
     this->appointments = appointments;
@@ -153,6 +152,7 @@ void AppointmentRecord::cancelAppointment() {
     qDebug() << "Cancel appointment";
     // 更新数据库及内存中保存的数据
     // call database here
+    Database::cancelAppointment(appointments[cancelRowNum].id);
 
     // 更新界面
     // 获取相应单元格的部件并强转为OperationAndStatus类型，进而重置标签内容
@@ -185,4 +185,5 @@ void AppointmentRecord::continueAppointment(AliasName::TimeScope continueTimeSco
     appointmentRecord->item(continueNum, 1)->setText(tr(newTime.c_str()));
     // 更新数据库的结束时间
     // TODO:call database here
+    Database::continueAppointment(appointments[continueNum].id, newTime);
 }

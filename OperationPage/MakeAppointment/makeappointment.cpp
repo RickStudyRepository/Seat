@@ -1,6 +1,7 @@
 #include "MakeAppointment.h"
 #include "../../Tools/AliasName.h"
 #include "../../Tools/Tools.h"
+#include "../../Database/Database.h"
 #include <QDebug>
 
 MakeAppointment::MakeAppointment(QWidget *parent) : QWidget(parent) {
@@ -45,12 +46,10 @@ void MakeAppointment::callTimeDialog(int seatNum) {
     selectedSeatNum = seatNum;
     // TODO: call database here
     // 这里需要使用数据库获取该座位的可用时间段
-    AliasName::TimeScopes test;
-    test.push_back(AliasName::TimeScope(8, 12));
-    test.push_back(AliasName::TimeScope(14, 22));
+    AliasName::TimeScopes availableTimes = Database::getAvailableTimesOf(seatNum);
 
     // 设置对话框的可用时间段
-    timeDialog->setTimeScopeAndShow(test);
+    timeDialog->setTimeScopeAndShow(availableTimes);
 }
 
 void MakeAppointment::initConfirmDialog() {
@@ -108,14 +107,7 @@ void MakeAppointment::writeAppointmentToDatabase() {
         ConstValue::UsingSeat
     );
     // TODO:call database here
-    qDebug() << "向数据库写入预约信息：\n"
-             << "预约人：" << studentNum << "\n"
-             << "座位号：" << selectedSeatNum << "\n"
-             << "时间段："
-             << Tools::intToTimeString(timeScope.first)
-             << "-"
-             << Tools::intToTimeString(timeScope.second) << "\n"
-             << "状态：" << QString::fromStdString(ConstValue::UsingSeat);
+    Database::makeNewAppoinment(newAppointment);
     // 重置座位号和时间段
     resetSeatAndTimeScope();
 }

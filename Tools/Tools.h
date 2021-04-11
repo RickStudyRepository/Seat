@@ -38,11 +38,11 @@ public:
     }
 
     /**
-     * @brief getCurrentDate, 获取当前日期的"YYYY-MM-DD"表示字符串
+     * @brief getCurrentDate, 获取当前日期的"yyyy-MM-dd"表示字符串
      * @return
      */
     static std::string getCurrentDate() {
-        return QDate::currentDate().toString(QString("YYYY-MM-DD")).toStdString();
+        return QDate::currentDate().toString(QString("yyyy-MM-dd")).toStdString();
     }
 
     /**
