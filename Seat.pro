@@ -31,7 +31,8 @@ SOURCES += \
     OperationPage/MakeAppointment/TimeSelectionDialog.cpp \
     OperationPage/AppointmentRecord/AppointmentRecord.cpp \
     OperationPage/AppointmentRecord/ContinueTimeDialog.cpp \
-    Tools/Dialog/AbstractTimeSelectionDialog.cpp
+    Tools/Dialog/AbstractTimeSelectionDialog.cpp \
+    Database/Database.cpp
 
 HEADERS += \
     MainWindow.h \
@@ -53,7 +54,8 @@ HEADERS += \
     Tools/Dialog/AutoCloseMessageBox.h \
     Tools/Dialog/ConfirmDialog.h \
     HomePage/AdminLabel.h \
-    Tools/FontFactory.h
+    Tools/FontFactory.h \
+    Database/Database.h
 
 RESOURCES += \
     images.qrc

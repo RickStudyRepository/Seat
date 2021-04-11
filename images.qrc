@@ -3,5 +3,6 @@
         <file>images/HomePage.jpg</file>
         <file>images/ReturnHomePage.svg</file>
         <file>images/Seat.ico</file>
+        <file>images/Seat.png</file>
     </qresource>
 </RCC>

@@ -23,6 +23,7 @@ public:
         // 固定座位图片大小
         photoLabel->setFixedSize(100, 100);
         photoLabel->setPixmap(picture.copy().scaled(photoLabel->size()));
+        photoLabel->setFrameStyle(QFrame::Box);
         // 图片被左键单击之后发送自己的座位编号
         connect(photoLabel, SIGNAL(leftButtonRelease()), this, SLOT(selected()));
         // 设置座位编号字符串："001", "020"等形式
@@ -38,8 +39,6 @@ public:
         setLayout(layout);
         // 固定部件大小
         setFixedSize(100, 130);
-        // 设置边框，宽度为2，颜色是黑色
-        setStyleSheet("border: 2px solid #000000;");
     }
 
 private:

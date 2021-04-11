@@ -20,7 +20,7 @@ void MakeAppointment::initSeats() {
     // 要在这里载入所有座位的可用时间段
     SeatWidget* temp;
     for (int i = 0; i < 100; i++) {
-        temp = new SeatWidget(QPixmap(":/images/Seat.ico"), i + 1);
+        temp = new SeatWidget(QPixmap(":/images/Seat.png"), i + 1);
         // 绑定选择时间对话框槽函数
         connect(temp, SIGNAL(sendSeatNum(int)), this, SLOT(callTimeDialog(int)));
         layout->addWidget(temp, i / 7, i % 7, 1, 1);
