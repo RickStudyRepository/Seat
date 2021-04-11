@@ -163,12 +163,10 @@ void AppointmentRecord::cancelAppointment() {
 void AppointmentRecord::callContinueDialog(int rowNum) {
     continueNum = rowNum;
     // 获取对应预约的预约时间范围
-    AliasName::TimeScope currentTimeScope = Tools::databaseTimeToTimeScope(appointments[rowNum].time);
+    AliasName::TimeScope currentTimeScope = Tools::databaseTimeToTimeScope(appointments[continueNum].time);
     // TODO:call database here
     // 从数据库中获取该座位的可用时间段
-    int seatNum = appointments[rowNum].seatNum;
-    AliasName::TimeScopes availableTimes;
-    availableTimes.push_back(AliasName::TimeScope(21, 22));
+    AliasName::TimeScopes availableTimes = Database::getAvailableTimesOf(appointments[continueNum].seatNum);
     // 设置当前选定的时间
     continueTimeDialog->setCurrentTimeScope(currentTimeScope);
     // 设置可用时间范围并呼出对话框

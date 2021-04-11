@@ -40,7 +40,7 @@ void Database::updateSeatTimeScopesOf(unsigned int seatNum, AliasName::TimeScope
 
 AliasName::TimeScopes Database::getAvailableTimesOf(unsigned int seatNum) {
     AliasName::TimeScopes test;
-    test.push_back(AliasName::TimeScope(8, 12));
-    test.push_back(AliasName::TimeScope(14, 21));
+    test.push_back(AliasName::TimeScope(9, 12));
+    test.push_back(AliasName::TimeScope(21, 22));
     return test;
 }
