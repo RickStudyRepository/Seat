@@ -2,6 +2,7 @@
 #define TOOLS_H
 
 #include <QString>
+#include <cstdlib>
 #include "AliasName.h"
 
 class Tools {
@@ -32,6 +33,16 @@ public:
         int start = Tools::timeStringToInt(QString::fromStdString(time.substr(11, 2)));
         int end = Tools::timeStringToInt(QString::fromStdString(time.substr(17, 2)));
         return AliasName::TimeScope(start, end);
+    }
+
+    /**
+     * @brief stringToInt, 将一个std::string类型的字符串转换为一个int整数，
+     *                     因为目标机不支持C++11，故没有使用stoi
+     * @param str: std::string, 一个整数字符串
+     * @return 整数字符串对应的整数值
+     */
+    static int stringToInt(std::string str) {
+        return atoi(str.c_str());
     }
 };
 
