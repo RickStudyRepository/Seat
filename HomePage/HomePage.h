@@ -32,14 +32,17 @@ signals:
     void gotoOperationPageSignal();
     // 前往超级管理员界面
     void gotoAdminPageSignal();
+    // 日志信息信号
+    void logSignal(QString);
 
 private slots:
     void gotoOperationPage() {
+        emit logSignal(tr("首页：前往操作界面"));
         emit gotoOperationPageSignal();
     }
 
     void gotoAdminPage() {
-        qDebug() << tr("前往超级管理员界面");
+        emit logSignal(tr("首页：准备进入管理员界面"));
         emit gotoAdminPageSignal();
     }
 };

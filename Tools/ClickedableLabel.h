@@ -34,6 +34,8 @@ signals:
     void leftButtonRelease();
     // 鼠标右键释放的信号
     void rightButtonRelease();
+    // 日志信息信号
+    void logSignal(QString);
 };
 
 #endif // CLICKEDABLELABEL_H

@@ -48,6 +48,8 @@ private:
 
 signals:
     void sendSeatNum(int);
+    // 日志信息信号
+    void logSignal(QString);
 
 private slots:
     void selected() {

@@ -74,6 +74,8 @@ signals:
     void sendTimeScope(AliasName::TimeScope timeScope);
     // 没有选择一个时间段
     void notSelectedTime();
+    // 日志信息信号
+    void logSignal(QString);
 };
 
 #endif // ABSTRACTTIMESELECTIONDIALOG_H

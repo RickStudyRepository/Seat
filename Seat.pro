@@ -32,7 +32,9 @@ SOURCES += \
     OperationPage/AppointmentRecord/AppointmentRecord.cpp \
     OperationPage/AppointmentRecord/ContinueTimeDialog.cpp \
     Tools/Dialog/AbstractTimeSelectionDialog.cpp \
-    Database/Database.cpp
+    Database/Database.cpp \
+    AdminPage/AdminPage.cpp \
+    Tools/DigitKeyBoard/DigitKeyBoard.cpp
 
 HEADERS += \
     MainWindow.h \
@@ -55,7 +57,10 @@ HEADERS += \
     Tools/Dialog/ConfirmDialog.h \
     HomePage/AdminLabel.h \
     Tools/FontFactory.h \
-    Database/Database.h
+    Database/Database.h \
+    AdminPage/AdminPage.h \
+    Tools/DigitKeyBoard/DigitKeyBoard.h \
+    Tools/Dialog/InputDialog.h
 
 RESOURCES += \
     images.qrc

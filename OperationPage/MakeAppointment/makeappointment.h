@@ -50,6 +50,8 @@ private:
     void callConfirmDialog();
 
 signals:
+    // 日志信息信号
+    void logSignal(QString);
 
 private slots:
     // 呼出选择时间对话框

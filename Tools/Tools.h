@@ -3,6 +3,7 @@
 
 #include <QString>
 #include <QDate>
+#include <QDateTime>
 #include <cstdlib>
 #include <vector>
 #include "AliasName.h"
@@ -38,11 +39,19 @@ public:
     }
 
     /**
-     * @brief getCurrentDate, 获取当前日期的"yyyy-MM-dd"表示字符串
+     * @brief getCurrentDate, 获取当前日期的"yyyy-MM-dd"字符串
      * @return
      */
     static std::string getCurrentDate() {
         return QDate::currentDate().toString(QString("yyyy-MM-dd")).toStdString();
+    }
+
+    /**
+     * @brief getCurrentDatetime，获取当前的日期时间的"yyyy-MM-dd HH:mm:ss"字符串
+     * @return QString, "yyyy-MM-dd HH:mm:ss"格式的日期字符串
+     */
+    static QString getCurrentDatetime() {
+        return QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
     }
 
     /**

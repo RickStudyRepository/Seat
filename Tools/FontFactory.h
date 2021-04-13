@@ -6,6 +6,13 @@
 
 class FontFactory {
 public:
+    // 构造标题字体
+    static QFont titleFont() {
+        QFont font;
+        font.setPointSize(ConstValue::TitleFontSize);
+        return font;
+    }
+
     // 构造表头字体
     static QFont tableHeaderFont() {
         QFont font;

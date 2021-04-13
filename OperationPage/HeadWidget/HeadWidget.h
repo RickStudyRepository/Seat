@@ -55,6 +55,8 @@ public:
 
 signals:
     void returnHomePageSignal();
+    // 日志信息信号
+    void logSignal(QString);
 
 public slots:
     void emitReturnHomePage() {

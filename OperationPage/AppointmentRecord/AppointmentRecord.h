@@ -55,6 +55,8 @@ public:
 
 signals:
     void resetOperationAndStatus(std::string status);
+    // 日志信息信号
+    void logSignal(QString);
 
 public slots:
     // 向用户确认取消预约

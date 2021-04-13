@@ -66,6 +66,8 @@ private slots:
 signals:
     // 发送倒计时结束的信号
     void countZero();
+    // 日志信息信号
+    void logSignal(QString);
 };
 
 #endif // COUNTDOWN_H

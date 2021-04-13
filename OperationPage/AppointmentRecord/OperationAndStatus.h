@@ -109,6 +109,8 @@ signals:
     void cancelSignal(int);
     // 续约信号
     void continueSignal(int);
+    // 日志信息信号
+    void logSignal(QString);
 
 private slots:
     void emitCancelSignal() {

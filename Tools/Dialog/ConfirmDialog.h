@@ -48,6 +48,8 @@ public:
 
 signals:
     void confirmed();
+    // 日志信息信号
+    void logSignal(QString);
 
 private slots:
     void confirm() {

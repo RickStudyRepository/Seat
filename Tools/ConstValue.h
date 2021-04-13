@@ -9,6 +9,8 @@ namespace ConstValue {
     const std::string NotSigned = "未签到";
 
     // 字体大小
+    // 标题字体大小
+    const int TitleFontSize = 15;
     // 表格表头字体大小
     const int TableHeaderFontSize = 13;
     // 表格内容字体大小
@@ -19,6 +21,9 @@ namespace ConstValue {
     const int SeatNumFontSize = 12;
     // 其他说明性信息字体大小
     const int DescribeFontSize = 13;
+
+    // 超级管理员密码
+    const std::string password = "123456";
 }
 
 #endif // CONSTVALUE_H

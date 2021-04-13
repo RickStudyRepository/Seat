@@ -51,6 +51,8 @@ public:
 
 signals:
     void returnHomePage();
+    // 日志信息信号
+    void logSignal(QString);
 
 public slots:
     // 展示操作界面
