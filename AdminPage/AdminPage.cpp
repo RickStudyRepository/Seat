@@ -107,7 +107,15 @@ void AdminPage::initWarning() {
 }
 
 void AdminPage::appendLog(QString logString) {
-    logTextEdit->append(Tools::getCurrentDatetime() + tr("\n") + logString);
+    QString nowTime = Tools::getCurrentDatetime();
+    if (nowTime == previousLogTime) {
+        logTextEdit->append(logString);
+    }
+    else {
+        logTextEdit->append(nowTime + tr("\n") + logString);
+        // 更新上次写入日志的时间
+        previousLogTime = nowTime;
+    }
 }
 
 bool AdminPage::verifyPassword(QString password) {

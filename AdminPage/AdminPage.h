@@ -63,6 +63,9 @@ private:
     QGridLayout* layout = NULL;
     void initLayout();
 
+    // 上次写入日志的时间
+    QString previousLogTime;
+
 public:
     explicit AdminPage(QWidget *parent = NULL);
 
