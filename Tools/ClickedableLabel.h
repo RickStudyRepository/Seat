@@ -21,10 +21,12 @@ private:
     void mouseReleaseEvent(QMouseEvent* mouseEvent) {
         // 鼠标左键释放
         if (mouseEvent->button() == Qt::LeftButton) {
+            emit logSignal(tr("可点击的标签部件：鼠标左键释放"));
             emit leftButtonRelease();
         }
         // 鼠标右键释放
         if (mouseEvent->button() == Qt::RightButton) {
+            emit logSignal(tr("可点击的标签部件：鼠标右键释放"));
             emit rightButtonRelease();
         }
     }

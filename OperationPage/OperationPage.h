@@ -21,6 +21,8 @@ private:
     QWidget* operationPage = new QWidget(this);
     // 布局
     QVBoxLayout* layout = new QVBoxLayout(this);
+    // 初始化布局
+    void initLayout();
 
     // 操作界面顶部部件
     HeadWidget* headWidget = new HeadWidget(this);
@@ -41,8 +43,8 @@ private:
     AppointmentRecord* appointmentRecord = new AppointmentRecord(this);
     QString appointmentRecordString = tr("我的预约");
 
-    // 初始化布局
-    void initLayout();
+    // 绑定日志信号
+    void connectLogString();
 
 public:
     explicit OperationPage(QWidget *parent = NULL);

@@ -43,6 +43,7 @@ public:
 
     void setTextAndShow(QString text) {
         confirmStringLabel->setText(text);
+        emit logSignal(tr("确认对话框：将确认文本设置为：") + text + "，并显示");
         show();
     }
 
@@ -55,6 +56,7 @@ private slots:
     void confirm() {
         // 发送确认预约的信号
         emit confirmed();
+        emit logSignal(tr("确认对话框：确认按钮被按下"));
         close();
     }
 };

@@ -13,6 +13,7 @@ AppointmentRecord::AppointmentRecord(QWidget *parent) : QWidget(parent)
     initConfirmDialog();
     initContinueDialog();
     initLayout();
+    connectLogString();
 }
 
 void AppointmentRecord::initLayout() {
@@ -83,18 +84,26 @@ void AppointmentRecord::initContinueDialog() {
     );
 }
 
+void AppointmentRecord::connectLogString() {
+    connect(confirmDialog, SIGNAL(logSignal(QString)), this, SIGNAL(logSignal(QString)));
+    connect(continueTimeDialog, SIGNAL(logSignal(QString)), this, SIGNAL(logSignal(QString)));
+}
+
 void AppointmentRecord::hideDialog() {
     // 按需关闭对话框
     if (confirmDialog->isVisible()) {
+        emit logSignal(tr("预约记录：自动关闭确认对话框"));
         confirmDialog->close();
     }
     if (continueTimeDialog->isVisible()) {
+        emit logSignal(tr("预约记录：自动关闭选择续约时间对话框"));
         continueTimeDialog->close();
     }
 }
 
 void AppointmentRecord::resetStudentNum(QString studentNum) {
     this->studentNum = studentNum;
+    emit logSignal(tr("预约记录：重置登录的学生的学号为：") + studentNum);
 }
 
 void AppointmentRecord::resetAppointments() {
@@ -126,8 +135,11 @@ void AppointmentRecord::resetAppointments() {
         tempOS = new OperationAndStatus(i, this->appointments[i].status, this);
         connect(tempOS, SIGNAL(cancelSignal(int)), this, SLOT(callConfirmDialog(int)));
         connect(tempOS, SIGNAL(continueSignal(int)), this, SLOT(callContinueDialog(int)));
+        // 绑定日志信号
+        connect(tempOS, SIGNAL(logSignal(QString)), this, SIGNAL(logSignal(QString)));
         appointmentRecord->setCellWidget(i, 2, tempOS);
     }
+    emit logSignal(tr("预约记录：重置预约记录表格内容"));
 }
 
 void AppointmentRecord::formatTableItem(QTableWidgetItem *item) {
@@ -146,13 +158,22 @@ void AppointmentRecord::callConfirmDialog(int rowNum) {
             QString::number(this->appointments[rowNum].seatNum).toStdString() +
             "\n时间段：" + this->appointments[rowNum].time;
     confirmDialog->setTextAndShow(tr(text.c_str()));
+    emit logSignal(
+                tr("预约记录：呼出确认对话框，询问是否确认取消预约\n") +
+                tr("确认信息：\n") +
+                QString::fromStdString(text)
+    );
 }
 
 void AppointmentRecord::cancelAppointment() {
-    qDebug() << "Cancel appointment";
     // 更新数据库及内存中保存的数据
     // call database here
     Database::cancelAppointment(appointments[cancelRowNum].id);
+    emit logSignal(
+                tr("预约记录：取消预约ID为：") +
+                QString::number(appointments[cancelRowNum].id) +
+                tr("预约")
+    );
 
     // 更新界面
     // 获取相应单元格的部件并强转为OperationAndStatus类型，进而重置标签内容
@@ -161,6 +182,7 @@ void AppointmentRecord::cancelAppointment() {
 }
 
 void AppointmentRecord::callContinueDialog(int rowNum) {
+    emit logSignal(tr("预约记录：呼出选择续约时间对话框"));
     continueNum = rowNum;
     // 获取对应预约的预约时间范围
     AliasName::TimeScope currentTimeScope = Tools::databaseTimeToTimeScope(appointments[continueNum].time);
@@ -174,6 +196,7 @@ void AppointmentRecord::callContinueDialog(int rowNum) {
 }
 
 void AppointmentRecord::continueAppointment(AliasName::TimeScope continueTimeScope) {
+    std::string oldTime = appointments[continueNum].time;
     std::string newTime = appointments[continueNum].time;
     // 更新内存中的结束时间
     newTime.replace(17, 5, Tools::intToTimeString(continueTimeScope.second).toStdString());
@@ -184,4 +207,11 @@ void AppointmentRecord::continueAppointment(AliasName::TimeScope continueTimeSco
     // 更新数据库的结束时间
     // TODO:call database here
     Database::continueAppointment(appointments[continueNum].id, newTime);
+    emit logSignal(
+                tr("预约记录：续约预约ID号为：") +
+                QString::number(appointments[continueNum].id) +
+                tr("的预约\n") +
+                tr("旧的时间：") + QString::fromStdString(oldTime) + tr("\n") +
+                tr("新的时间：") + QString::fromStdString(newTime)
+    );
 }

@@ -26,6 +26,11 @@ private:
     // 布局
     QGridLayout* layout = new QGridLayout(this);
 
+    // 绑定日志信号槽
+    void connectLogString() {
+        connect(countDown, SIGNAL(logSignal(QString)), this, SIGNAL(logSignal(QString)));
+    }
+
 public:
     explicit HeadWidget(QWidget *parent = NULL)
         : QWidget(parent)
@@ -60,6 +65,7 @@ signals:
 
 public slots:
     void emitReturnHomePage() {
+        emit logSignal(tr("操作界面顶部部件：倒计时结束或返回按钮按下，返回首页"));
         emit returnHomePageSignal();
     }
 };

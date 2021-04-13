@@ -72,7 +72,7 @@ public:
 
     // 在用户通过操作进行了修改之后，变更操作或状态中的内容
     void resetOperationAndStatus(std::string status) {
-        // 如果用户确认了取消预约，那么状态会变更为已履约，也就是：usedSeat
+        // 如果用户确认了取消预约，那么状态会变更为已履约，也就是：UsedSeat
         if (status == ConstValue::UsedSeat) {
             if (cancelLabel == NULL || continueLabel == NULL) {
                 return;
@@ -93,10 +93,12 @@ public:
             if (status == ConstValue::UnusedSeat) {
                 // 设置已失约为红色，突出显示
                 statusLabel->setStyleSheet("color:red;");
+                emit logSignal(tr("操作或状态：重置为未履约"));
             }
             else {
                 // 设置已履约为绿色，突出显示
                 statusLabel->setStyleSheet("color:green");
+                emit logSignal(tr("操作或状态：重置为已履约"));
             }
             statusLabel->setText(tr(status.c_str()));
             statusLabel->setFont(FontFactory::tableOperationAndStatusFont(status));
@@ -114,11 +116,13 @@ signals:
 
 private slots:
     void emitCancelSignal() {
+        emit logSignal(tr("操作或状态：取消预约，行号为：") + QString::number(rowNum));
         // 取消某一个预约
         emit cancelSignal(rowNum);
     }
 
     void emitContinueSignal() {
+        emit logSignal(tr("操作或状态：续约，行号为：") + QString::number(rowNum));
         emit continueSignal(rowNum);
     }
 };

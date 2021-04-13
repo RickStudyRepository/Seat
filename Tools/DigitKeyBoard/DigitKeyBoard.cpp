@@ -67,6 +67,7 @@ void DigitKeyBoard::initLayout() {
 }
 
 void DigitKeyBoard::startInput(QLineEdit* output) {
+    emit logSignal(tr("数字键盘：开始向") + QString::number((int)output) + tr("指向的文本框输入信息"));
     this->output = output;
     show();
 }
@@ -77,14 +78,16 @@ void DigitKeyBoard::actionButton(QString buttonText) {
         hide();
         // 本次输入结束，重置输出文本框
         output = NULL;
-        qDebug() << "隐藏";
+        emit logSignal(tr("数字键盘：输入结束，隐藏数字键盘"));
     }
     // 删除光标前的一个字符
     else if (buttonText == "backspace") {
         output->backspace();
+        emit logSignal(tr("数字键盘：删除目标文本框光标前的一个字符"));
     }
     // 在光标前插入一个字符串
     else {
         output->insert(buttonText);
+        emit logSignal(tr("数字键盘：向文本框添加文本：") + buttonText);
     }
 }

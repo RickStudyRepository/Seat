@@ -57,6 +57,7 @@ void AbstractTimeSelectionDialog::setTimeScopeAndShow(AliasName::TimeScopes avai
 
     // 显示
     show();
+    emit logSignal(tr("抽象的时间选择对话框：设置下拉列表并显示"));
 }
 
 void AbstractTimeSelectionDialog::verifyTimeScope() {
@@ -77,10 +78,15 @@ void AbstractTimeSelectionDialog::verifyTimeScope() {
         isSelected = true;
         // 发送时间范围
         emit sendTimeScope(AliasName::TimeScope(start, end));
-        qDebug() << "Send time scope:" << start << "," << end;
+        emit logSignal(
+                    tr("抽象的时间选择对话框：发送选择的时间段：") +
+                    QString::number(start) + "-" +
+                    QString::number(end)
+        );
         close();
     }
     else {
+        emit logSignal(tr("抽象的时间选择对话框：选择了非法的时间段，停止发送时间段"));
         autoCloseMsgBox->showAndClose(5, tr("非法时间段"), tr("请选择一个连续的时间段！"));
     }
 }
@@ -88,6 +94,7 @@ void AbstractTimeSelectionDialog::verifyTimeScope() {
 void AbstractTimeSelectionDialog::cancel() {
     // 若没有选择时间段，则发送未选择时间段的信号
     if (isSelected == false) {
+        emit logSignal(tr("抽象的时间选择对话框：取消选择时间段"));
         emit notSelectedTime();
     }
     // 若对话框可见则关闭对话框

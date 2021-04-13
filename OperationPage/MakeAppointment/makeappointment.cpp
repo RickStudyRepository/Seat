@@ -9,6 +9,7 @@ MakeAppointment::MakeAppointment(QWidget *parent) : QWidget(parent) {
     initLayout();
     initTimeDialog();
     initConfirmDialog();
+    connectLogString();
 
     // 设置滚动区域
     scrollArea->setWidget(makeAppointment);
@@ -50,6 +51,7 @@ void MakeAppointment::callTimeDialog(int seatNum) {
 
     // 设置对话框的可用时间段
     timeDialog->setTimeScopeAndShow(availableTimes);
+    emit logSignal(tr("现场预约：呼出选择时间对话框"));
 }
 
 void MakeAppointment::initConfirmDialog() {
@@ -68,16 +70,28 @@ void MakeAppointment::callConfirmDialog() {
             Tools::intToTimeString(timeScope.second) +
             tr("\n请确认你的预约信息！");
     confirmDialog->setTextAndShow(text);
+    emit logSignal(
+                tr("现场预约：呼出确认预约对话框") + tr("\n") +
+                tr("确认信息内容为：\n") +
+                text
+    );
+}
+
+void MakeAppointment::connectLogString() {
+    connect(timeDialog, SIGNAL(logSignal(QString)), this, SIGNAL(logSignal(QString)));
+    connect(confirmDialog, SIGNAL(logSignal(QString)), this, SIGNAL(logSignal(QString)));
 }
 
 void MakeAppointment::hideDialog() {
     // 关闭确认对话框
     if (confirmDialog->isVisible()) {
         confirmDialog->close();
+        emit logSignal(tr("现场预约：自动关闭确认预约对话框"));
     }
     // 关闭时间选择对话框
     if (timeDialog->isVisible()) {
         timeDialog->close();
+        emit logSignal(tr("现场预约：自动关闭时间选择对话框"));
     }
     // 以防万一，重置座位号和时间段
     resetSeatAndTimeScope();
@@ -86,12 +100,18 @@ void MakeAppointment::hideDialog() {
 void MakeAppointment::receiveTimeScope(AliasName::TimeScope timeScope) {
     // 接收时间段
     this->timeScope = timeScope;
+    emit logSignal(
+                tr("现场预约：接收时间范围：") +
+                QString::number(timeScope.first) + "-" +
+                QString::number(timeScope.second)
+    );
     // 询问用户是否确认预约
     callConfirmDialog();
 }
 
 void MakeAppointment::resetStudentNum(QString studentNum) {
     this->studentNum = studentNum;
+    emit logSignal(tr("现场预约：重置登录的学生学号为：") + studentNum);
 }
 
 void MakeAppointment::writeAppointmentToDatabase() {
@@ -105,6 +125,14 @@ void MakeAppointment::writeAppointmentToDatabase() {
         "-" +
         Tools::intToTimeString(timeScope.second).toStdString(),
         ConstValue::UsingSeat
+    );
+    emit logSignal(
+                tr("现场预约：向数据库写入新的预约信息\n") +
+                tr("预约信息：\n") +
+                tr("学号：") + QString::fromStdString(newAppointment.studentNum) + "\n" +
+                tr("座位号：") + QString::number(newAppointment.seatNum) + "\n" +
+                tr("时间段：") + QString::fromStdString(newAppointment.time) + "\n" +
+                tr("状态：") + QString::fromStdString(newAppointment.status)
     );
     // TODO:call database here
     Database::makeNewAppoinment(newAppointment);

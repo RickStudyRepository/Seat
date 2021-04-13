@@ -41,7 +41,7 @@ void AdminPage::initSystemName() {
 }
 
 void AdminPage::initAuthorName() {
-    authorName = new QLabel(tr("作者：181110305-董成相 AND 181110308-吉张雄"), this);
+    authorName = new QLabel(tr("作者：181110305-董成相 和 181110308-吉张雄"), this);
     authorName->setFont(FontFactory::describeFont());
 }
 
@@ -107,7 +107,7 @@ void AdminPage::initWarning() {
 }
 
 void AdminPage::appendLog(QString logString) {
-    logTextEdit->append(Tools::getCurrentDatetime() + tr(": ") + logString);
+    logTextEdit->append(Tools::getCurrentDatetime() + tr("\n") + logString);
 }
 
 bool AdminPage::verifyPassword(QString password) {
@@ -118,6 +118,7 @@ void AdminPage::inputStudentNum() {
     // 清空文本框内的内容
     inputDialog->clearLineEdit();
     inputDialog->show();
+    appendLog(tr("管理员界面：呼出学号输入对话框"));
     callDigitKeyBoard(inputDialog->getLineEdit());
 }
 
@@ -130,9 +131,11 @@ void AdminPage::callDigitKeyBoard(QLineEdit* output) {
     );
     if (digitKeyBoard->isHidden() == false) {
         // 如果键盘没有被隐藏，那么就将数字键盘窗口设置为活动窗口
+        appendLog(tr("管理员界面：将数字键盘设置为活动窗口"));
         digitKeyBoard->activateWindow();
     }
     else {
+        appendLog(tr("管理员界面：呼出数字键盘，开始输入学号"));
         digitKeyBoard->startInput(output);
     }
 }
@@ -141,6 +144,7 @@ void AdminPage::confirmWriteStudentNum(QString studentNum) {
     // 检验输入是否为空
     if (studentNum == tr("")) {
         warning->showAndClose(3, tr("非法的学号"), tr("学号不能为空"));
+        appendLog(tr("管理员界面：输入的学号为空，停止写入"));
         return;
     }
     // 关闭输入对话框及数字键盘
@@ -163,22 +167,26 @@ void AdminPage::writeStudentNum() {
 void AdminPage::gotoFront(QPoint parentPos) {
     this->parentPos = parentPos;
     show();
+    appendLog(tr("管理员界面：切入前台"));
 }
 
 void AdminPage::gotoBack() {
     closeInputDialog();
     hideDigitKeyBoard();
     hide();
+    appendLog(tr("管理员界面：切入后台"));
 }
 
 void AdminPage::closeInputDialog() {
     if (inputDialog->isVisible()) {
         inputDialog->close();
+        appendLog(tr("管理员界面：关闭学号输入对话框"));
     }
 }
 
 void AdminPage::hideDigitKeyBoard() {
     if (digitKeyBoard->isVisible()) {
         digitKeyBoard->hide();
+        appendLog(tr("管理员界面：隐藏数字键盘"));
     }
 }

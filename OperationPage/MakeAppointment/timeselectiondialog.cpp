@@ -1,7 +1,5 @@
 #include "TimeSelectionDialog.h"
 
-
-
 TimeSelectionDialog::TimeSelectionDialog(QWidget *parent)
     : AbstractTimeSelectionDialog(parent)
 {

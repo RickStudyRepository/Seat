@@ -53,6 +53,7 @@ signals:
 
 private slots:
     void selected() {
+        emit logSignal(tr("座位部件：被选中，座位号：") + QString::number(num));
         emit sendSeatNum(num);
     }
 };

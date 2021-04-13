@@ -49,9 +49,10 @@ void MainWindow::initOperationPage() {
 }
 
 void MainWindow::connectLogString() {
-    connect(homePage, SIGNAL(logSignal(QString)), this, SIGNAL(logSignal(QString)));
-    connect(operationPage, SIGNAL(logSignal(QString)), this, SIGNAL(logSignal(QString)));
-    connect(inputDialog, SIGNAL(logSignal(QString)), this, SIGNAL(logSignal(QString)));
+    connect(homePage, SIGNAL(logSignal(QString)), adminPage, SLOT(appendLog(QString)));
+    connect(operationPage, SIGNAL(logSignal(QString)), adminPage, SLOT(appendLog(QString)));
+    connect(inputDialog, SIGNAL(logSignal(QString)), adminPage, SLOT(appendLog(QString)));
+    connect(digitKeyBoard, SIGNAL(logSignal(QString)), adminPage, SLOT(appendLog(QString)));
     connect(this, SIGNAL(logSignal(QString)), adminPage, SLOT(appendLog(QString)));
 }
 
@@ -151,6 +152,7 @@ void MainWindow::verifyPassword(QString input) {
 // 停止前往管理员界面
 void MainWindow::stopGoingAdminPage() {
     isGoingAdminPage = false;
+    emit logSignal(tr("主窗口：停止前往管理员界面"));
 }
 
 // 切换到操作界面

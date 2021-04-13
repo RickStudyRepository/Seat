@@ -35,8 +35,6 @@ public:
         initButton();
         initLineEdit();
         initLayout();
-        // 设置为只能当前窗口活动
-//        setWindowModality(Qt::ApplicationModal);
         setFont(FontFactory::dialogFont());
     }
 
@@ -50,10 +48,12 @@ public:
 
     void clearLineEdit() {
         inputLineEdit->clear();
+        emit logSignal(tr("输入对话框：清空输入文本框"));
     }
 
     void setTip(QString text) {
         tipLabel->setText(text);
+        emit logSignal(tr("输入对话框：设置输入提示为：") + text);
     }
 
     QLineEdit* getLineEdit() {
@@ -83,7 +83,7 @@ private:
         cancelButton->setText(tr("取消"));
         cancelButton->setFont(FontFactory::describeFont());
         connect(cancelButton, SIGNAL(released()), this, SLOT(close()));
-        connect(cancelButton, SIGNAL(released()), this, SIGNAL(cancel()));
+        connect(cancelButton, SIGNAL(released()), this, SLOT(cancelInput()));
 
         // 呼出键盘按钮
         callDigitKeyBoard = new QPushButton(this);
@@ -115,11 +115,19 @@ signals:
 private slots:
     // 确认输入
     void confirm() {
+        emit logSignal(tr("输入对话框：确认输入"));
         emit confirmed(inputLineEdit->text());
+    }
+
+    // 取消输入
+    void cancelInput() {
+        emit logSignal(tr("输入对话框：取消输入"));
+        emit cancel();
     }
 
     // 发送呼出键盘的信号
     void emitShowKeyBoard() {
+        emit logSignal(tr("输入对话框：请求将数字键盘设置为活动窗口"));
         emit showKeyBoardSignal(inputLineEdit);
     }
 };

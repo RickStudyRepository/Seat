@@ -46,6 +46,9 @@ private slots:
     // 响应按键
     void actionButton(QString buttonText);
 
+signals:
+    void logSignal(QString);
+
 };
 
 #endif // DIGITKEYBOARD_H

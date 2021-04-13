@@ -3,6 +3,7 @@
 
 #include <QLCDNumber>
 #include <QTimer>
+#include <QString>
 #include <QWidget>
 
 class CountDown : public QLCDNumber
@@ -36,10 +37,12 @@ public:
         time = maxTime;
         timer->start(oneSecond);
         display(time);
+        emit logSignal(tr("倒计时：开始计时，时长为：") + QString::number(maxTime));
     }
     // 停止倒计时
     void stopCountDown() {
         timer->stop();
+        emit logSignal(tr("倒计时：停止计时，剩余时长为：") + QString::number(time));
     }
 
 private slots:
@@ -51,11 +54,12 @@ private slots:
         if (time < 1) {
             // 停止计时器
             timer->stop();
+            emit logSignal(tr("倒计时：计时结束"));
             emit countZero();
         }
     }
 
-    // 每当用户有操作时，重置倒计时
+    // 每当用户有操作时，重置倒计时，暂未用到
     void resetTime() {
         time = maxTime;
         display(time);

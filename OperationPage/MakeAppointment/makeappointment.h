@@ -49,6 +49,9 @@ private:
     // 呼出确认预约对话框，返回是否确认预约
     void callConfirmDialog();
 
+    // 绑定日志信号槽
+    void connectLogString();
+
 signals:
     // 日志信息信号
     void logSignal(QString);

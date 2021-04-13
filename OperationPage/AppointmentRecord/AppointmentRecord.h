@@ -44,6 +44,9 @@ private:
     void initContinueDialog();
     int continueNum;
 
+    // 绑定日志信号槽
+    void connectLogString();
+
 public:
     explicit AppointmentRecord(QWidget *parent = NULL);
     // 重置预约人学号
