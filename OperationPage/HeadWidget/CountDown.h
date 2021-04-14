@@ -21,7 +21,7 @@ public:
         : QLCDNumber(parent), maxTime(maxTime)
     {
         // 设置显示的数字个数
-        setDigitCount(std::to_string(maxTime).length());
+        setDigitCount(QString::number(maxTime).length());
         // 默认设置，字母样式
         setSegmentStyle(QLCDNumber::Filled);
         // 设置成无边框

@@ -170,6 +170,7 @@ void AdminPage::confirmWriteStudentNum(QString studentNum) {
 
 void AdminPage::writeStudentNum() {
     appendLog(tr("向卡片内写入学号：") + studentNum);
+    // TODO: call RIFD here
 }
 
 void AdminPage::gotoFront(QPoint parentPos) {

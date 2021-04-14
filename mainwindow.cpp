@@ -152,7 +152,7 @@ void MainWindow::verifyPassword(QString input) {
 // 停止前往管理员界面
 void MainWindow::stopGoingAdminPage() {
     isGoingAdminPage = false;
-    emit logSignal(tr("主窗口：停止前往管理员界面"));
+    emit logSignal(tr("主窗口：解开前往其他窗口的限制"));
 }
 
 // 切换到操作界面
