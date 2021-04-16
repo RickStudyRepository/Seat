@@ -20,17 +20,22 @@ public:
     {
         // 座位编号
         this->num = num;
+
+        photoLabel = new ClickedableLabel(this);
         // 固定座位图片大小
         photoLabel->setFixedSize(100, 100);
         photoLabel->setPixmap(picture.copy().scaled(photoLabel->size()));
         photoLabel->setFrameStyle(QFrame::Box);
         // 图片被左键单击之后发送自己的座位编号
         connect(photoLabel, SIGNAL(leftButtonRelease()), this, SLOT(selected()));
+
+        numLabel = new QLabel(this);
         // 设置座位编号字符串："001", "020"等形式
         numLabel->setText(QString("%1").arg(num, 3, 10, QChar('0')));
         // 设置座位编号为水平垂直居中
         numLabel->setAlignment(Qt::AlignCenter);
         numLabel->setFont(FontFactory::seatNumFont());
+
         QVBoxLayout* layout = new QVBoxLayout(this);
         layout->addWidget(photoLabel);
         layout->addWidget(numLabel);
@@ -42,8 +47,8 @@ public:
     }
 
 private:
-    ClickedableLabel* photoLabel = new ClickedableLabel(this);
-    QLabel* numLabel = new QLabel(this);
+    ClickedableLabel* photoLabel;
+    QLabel* numLabel;
     int num;
 
 signals:

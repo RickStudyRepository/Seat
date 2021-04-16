@@ -34,22 +34,22 @@ private:
 
     // 部件
     // 系统名称
-    QLabel* systemName = NULL;
+    QLabel* systemName;
     void initSystemName();
     // 作者名称
-    QLabel* authorName = NULL;
+    QLabel* authorName;
     void initAuthorName();
     // 一个美化的水平线
-    QFrame* horizontalLine = NULL   ;
+    QFrame* horizontalLine;
     void initHorizontalLine();
     // 返回首页的按钮
-    QPushButton* returnButton = NULL;
+    QPushButton* returnButton;
     void initReturnButton();
     // 初始化卡片信息的按钮
-    QPushButton* initCardContent = NULL;
+    QPushButton* initCardContent;
     void initCardContentButton();
     // 日志文本框，常量指针指向常量数据
-    QTextEdit* const logTextEdit = NULL;
+    QTextEdit* const logTextEdit;
     void initLogTextEdit();
 
     // 输入对话框
@@ -75,7 +75,7 @@ private:
     void initExitButton();
 
     // 布局
-    QGridLayout* layout = NULL;
+    QGridLayout* layout;
     void initLayout();
 
     // 上次写入日志的时间

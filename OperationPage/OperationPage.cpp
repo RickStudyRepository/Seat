@@ -4,25 +4,21 @@
 #include <QPalette>
 #include <QColor>
 
-OperationPage::OperationPage(QWidget *parent) : QWidget(parent)
-{
-    initOperationTab();
+OperationPage::OperationPage(QWidget *parent) : QWidget(parent) {
+    initHeadWidget();
     initHorizontalLine();
+    initOperationTab();
     initLayout();
     connectLogString();
+}
+
+void OperationPage::initHeadWidget() {
+    headWidget = new HeadWidget(this);
     connect(headWidget, SIGNAL(returnHomePageSignal()), this, SLOT(emitReturnHomePage()));
 }
 
-void OperationPage::initLayout() {
-    layout->addWidget(headWidget);
-    layout->addWidget(horizontalLine);
-    layout->addWidget(operationTab);
-    layout->setMargin(0);
-    layout->setAlignment(Qt::AlignCenter);
-    setLayout(layout);
-}
-
 void OperationPage::initHorizontalLine() {
+    horizontalLine = new QFrame(this);
     horizontalLine->setFrameStyle(QFrame::HLine);
     horizontalLine->setLineWidth(2);
     horizontalLine->setFixedWidth(494);
@@ -32,17 +28,32 @@ void OperationPage::initHorizontalLine() {
 }
 
 void OperationPage::initOperationTab() {
+    operationTab = new QTabWidget(this);
     // 设置Tab的样式为圆角
     operationTab->setTabShape(QTabWidget::Rounded);
     // 将Tab设置为不能调整顺序
     operationTab->setMovable(false);
-    // 添加页面到Tab中
-    operationTab->addTab(makeAppoinment, makeAppoinmentString);
-    operationTab->addTab(appointmentRecord, appointmentRecordString);
+    // 添加现场预约到Tab中
+    makeAppoinment = new MakeAppointment(this);
+    operationTab->addTab(makeAppoinment, ConstValue::makeAppoinmentString);
+    // 添加我的预约到Tab中
+    appointmentRecord = new AppointmentRecord(this);
+    operationTab->addTab(appointmentRecord, ConstValue::appointmentRecordString);
     // 默认展示“开始预约”操作界面
     operationTab->setCurrentIndex(0);
     operationTab->setFont(FontFactory::describeFont());
+    // 仅当进入我的预约界面时，加载我的预约记录
     connect(operationTab, SIGNAL(currentChanged(int)), this, SLOT(loadAppointments(int)));
+}
+
+void OperationPage::initLayout() {
+    layout = new QVBoxLayout(this);
+    layout->addWidget(headWidget);
+    layout->addWidget(horizontalLine);
+    layout->addWidget(operationTab);
+    layout->setMargin(0);
+    layout->setAlignment(Qt::AlignCenter);
+    setLayout(layout);
 }
 
 void OperationPage::connectLogString() {

@@ -4,17 +4,16 @@
 #include "../../Database/Database.h"
 #include <QDebug>
 
-MakeAppointment::MakeAppointment(QWidget *parent) : QWidget(parent) {
+MakeAppointment::MakeAppointment(QWidget *parent)
+    : QWidget(parent), selectedSeatNum(-1), timeScope(AliasName::TimeScope(-1, -1))
+{
     initSeats();
     initLayout();
+    initScrollArea();
+
     initTimeDialog();
     initConfirmDialog();
     connectLogString();
-
-    // 设置滚动区域
-    scrollArea->setWidget(makeAppointment);
-    // 设置最大的大小
-    scrollArea->setFixedSize(795, 387);
 }
 
 void MakeAppointment::initSeats() {
@@ -25,17 +24,35 @@ void MakeAppointment::initSeats() {
         temp = new SeatWidget(QPixmap(":/images/Seat.png"), i + 1);
         // 绑定选择时间对话框槽函数
         connect(temp, SIGNAL(sendSeatNum(int)), this, SLOT(callTimeDialog(int)));
-        layout->addWidget(temp, i / 7, i % 7, 1, 1);
+        seats.push_back(temp);
     }
 }
 
 void MakeAppointment::initLayout() {
+    layout = new QGridLayout(this);
     layout->setSpacing(10);
     layout->setMargin(2);
+
+    // 将所有的座位添加到布局中
+    size_t seatNum = seats.size();
+    for (size_t i = 0; i < seatNum; i++) {
+        layout->addWidget(seats[i], i / 7, i % 7, 1, 1);
+    }
+
+    makeAppointment = new QWidget(this);
     makeAppointment->setLayout(layout);
 }
 
+void MakeAppointment::initScrollArea() {
+    scrollArea = new QScrollArea(this);
+    // 设置滚动区域
+    scrollArea->setWidget(makeAppointment);
+    // 设置最大的大小
+    scrollArea->setFixedSize(795, 387);
+}
+
 void MakeAppointment::initTimeDialog() {
+    timeDialog = new TimeSelectionDialog(this);
     // 接收选定的时间范围
     connect(timeDialog, SIGNAL(sendTimeScope(AliasName::TimeScope)), this, SLOT(receiveTimeScope(AliasName::TimeScope)));
     // 接收是否选择了时间段
@@ -55,6 +72,7 @@ void MakeAppointment::callTimeDialog(int seatNum) {
 }
 
 void MakeAppointment::initConfirmDialog() {
+    confirmDialog = new ConfirmDialog(this);
     // 确认预约之后向数据库写入预约信息
     connect(confirmDialog, SIGNAL(confirmed()), this, SLOT(writeAppointmentToDatabase()));
     confirmDialog->setWindowTitle(tr("确认预约"));

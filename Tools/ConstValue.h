@@ -2,10 +2,21 @@
 #define CONSTVALUE_H
 
 #include "MacroDefinition.h"
+#include <QString>
+#include <QIcon>
+#include <QSize>
 
 using namespace MacroDefinition;
 
 namespace ConstValue {
+    // 应用相关的一些属性
+    // 窗口标题
+    const QString appName = "Seat";
+    // 窗口图标
+    const QIcon appIcon = QIcon(QString(":/images/Seat.ico"));
+    // 应用窗口大小
+    const QSize windowSize = QSize(800, 480);
+
     // 预约状态
     const std::string UsedSeat = "已履约";
     const std::string UnusedSeat = "已失约";
@@ -31,6 +42,12 @@ namespace ConstValue {
 
     // 操作界面自动返回首页的时间
     const int maxDuration = 120;
+    // 预约记录表格的列数
+    const int appointmentRecordTableColumn = 3;
+    // 现场预约Tab的字符串
+    const QString makeAppoinmentString = "现场预约";
+    // 我的预约Tab的字符串
+    const QString appointmentRecordString = "我的预约";
 
     // 读卡或写卡最大重试次数
     const unsigned short maxTryTimeOnCard = 10;

@@ -23,6 +23,7 @@ public:
     // 设置时间范围，实现对话框的复用
     void setTimeScopeAndShow(AliasName::TimeScopes availableTimes);
 
+// 把这些属性设置为protected是为了让具体的子类实现可以访问
 protected:
     // 所有的可用时间
     AliasName::TimeScopes availableTimes;
@@ -31,27 +32,33 @@ protected:
     // 标记用户是否选择了时间
     bool isSelected;
     // 整体布局
-    QGridLayout* layout = new QGridLayout(this);
+    QGridLayout* layout;
     // 开始时间下拉列表
-    QLabel* startTimeLabel = new QLabel(tr("开始时间"), this);
-    QComboBox* startTime = new QComboBox(this);
+    QLabel* startTimeLabel;
+    QComboBox* startTime;
     // 结束时间下拉列表
-    QLabel* endTimeLabel = new QLabel(tr("结束时间"), this);
-    QComboBox* endTime = new QComboBox(this);
+    QLabel* endTimeLabel;
+    QComboBox* endTime;
     // 确认按钮
-    QPushButton* okButton = new QPushButton(tr("确认"));
+    QPushButton* okButton;
     // 取消按钮
-    QPushButton* cancelButton = new QPushButton(tr("取消"));
+    QPushButton* cancelButton;
 
 private:
     // 自动关闭的消息提示框
-    AutoCloseMessageBox* autoCloseMsgBox = new AutoCloseMessageBox(this);
+    AutoCloseMessageBox* autoCloseMsgBox;
     void initAutoCloseMessageBox();
 
+    // 初始化开始结束时间标签
+    void initTimeLabels();
+    // 初始化开始结束时间下拉列表
+    void initTimeComboBoxes();
     // 初始化按钮
-    void initButton();
+    void initButtons();
     // 初始化布局
     void initLayout();
+    // 初始化对话框风格
+    void initDialog();
 
     // 重置开始时间下拉列表
     virtual void resetStartTime() = 0;

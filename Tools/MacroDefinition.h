@@ -21,7 +21,7 @@ namespace MacroDefinition {
     #define HI_UINT8(a) (((a) >> 4) & 0x0F)
     #define LO_UINT8(a) ((a) & 0x0F)
 
-    // 使用几个数构造出一个32位的无符号整数
+    // 使用4个字节构造出一个32位的无符号整数
     #define BUILD_UINT32(Byte0, Byte1, Byte2, Byte3) \
               ((uint32)((uint32)((Byte0) & 0x00FF) \
               + ((uint32)((Byte1) & 0x00FF) << 8) \
@@ -59,7 +59,7 @@ namespace MacroDefinition {
     #define SYSTEM_900M     4
     #define SYSTEM_2400M   5
 
-    #define UART_ADDR       _IOW(0x02,1,unsigned long)
+    #define UART_ADDR       _IOW(0x02, 1, unsigned long)
 
     #define _UART1_SEL_125K     0
     #define _UART1_SEL_14443    1

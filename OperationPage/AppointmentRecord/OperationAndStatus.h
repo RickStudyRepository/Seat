@@ -17,17 +17,18 @@ private:
     // 在表格中的行号
     int rowNum;
     // 布局
-    QHBoxLayout* layout = new QHBoxLayout(this);
+    QHBoxLayout* layout;
     // 操作标签
-    QLabel* cancelLabel = NULL;
-    QLabel* continueLabel = NULL;
+    QLabel* cancelLabel;
+    QLabel* continueLabel;
     // 操作标签之间的竖直线
-    QFrame* verticalLine = new QFrame(this);
+    QFrame* verticalLine;
     // 状态标签
-    QLabel* statusLabel = NULL;
+    QLabel* statusLabel;
 
     // 初始化布局，根据预约状态适配内容
     void initLayout(std::string status) {
+        layout = new QHBoxLayout(this);
         // 履约中或未签到，要放入两个可点击的标签
         if (status == ConstValue::UsingSeat || status == ConstValue::NotSigned) {
             cancelLabel = new QLabel(tr("<a href = '#'>取消预约</a>"), this);
@@ -35,6 +36,7 @@ private:
             continueLabel = new QLabel(tr("<a href = '#'>续约</a>"), this);
             connect(continueLabel, SIGNAL(linkActivated(QString)), this, SLOT(emitContinueSignal()));
             // 操作标签之间的竖直线
+            verticalLine = new QFrame(this);
             verticalLine->setFrameShape(QFrame::VLine);
             verticalLine->setLineWidth(2);
 

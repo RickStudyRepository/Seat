@@ -90,6 +90,7 @@ void AdminPage::initCardContentButton() {
 }
 
 void AdminPage::initLogTextEdit() {
+    // logTextEdit的初始化使用了类的初始化列表，因为是一个常量
     logTextEdit->setFont(FontFactory::describeFont());
     logTextEdit->setReadOnly(true);
     logTextEdit->setMinimumHeight(375);

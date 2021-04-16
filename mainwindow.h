@@ -15,7 +15,6 @@
 #include "Tools/Dialog/AutoCloseMessageBox.h"
 #include "Tools/ConstValue.h"
 
-
 // RFID相关
 #include "RFID/RFID.h"
 
@@ -33,14 +32,11 @@ private:
 
 // 界面相关
 private:
-    // 窗口标题
-    const QString appName = tr("Seat");
-    // 窗口图标
-    const QIcon appIcon = QIcon(QString(":/images/Seat.ico"));
-    // 窗口大小
-    const QSize fixedSize = QSize(800, 480);
+    // 初始化窗口的基本属性
+    void initWindowBasicProperty();
+
     // 整体布局
-    QVBoxLayout* layout = new QVBoxLayout(this);
+    QVBoxLayout* layout;
     void initLayout();
 
     // 密码输入对话框
@@ -99,8 +95,9 @@ private slots:
     void readStudentNum();
     // 切换到操作界面
     void gotoOperationPage(QString studentNum);
-    // 返回到首页界面
+    // 从操作界面返回到首页
     void returnHomePageFromOperationPage();
+    // 从管理员界面返回首页
     void returnHomePageFromAdminPage();
 
     // 关闭输入密码对话框和数字键盘

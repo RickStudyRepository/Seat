@@ -11,14 +11,14 @@ class CountDown : public QLCDNumber
     Q_OBJECT
 
 private:
-    QTimer* timer = new QTimer(this);
+    QTimer* timer;
     int time;
     const int maxTime;
-    const int oneSecond = 1000;
+    const int oneSecond;
 
 public:
     CountDown(QWidget *parent = 0, int maxTime = 0)
-        : QLCDNumber(parent), maxTime(maxTime)
+        : QLCDNumber(parent), maxTime(maxTime), oneSecond(1000)
     {
         // 设置显示的数字个数
         setDigitCount(QString::number(maxTime).length());
@@ -29,9 +29,11 @@ public:
         setFixedWidth(40);
         setStyleSheet("color:black");
 
+        timer = new QTimer(this);
         // 绑定槽函数
         connect(timer, SIGNAL(timeout()), this, SLOT(decreaseTime()));
     }
+
     // 开始倒计时
     void startCountDown() {
         time = maxTime;
@@ -39,6 +41,7 @@ public:
         display(time);
         emit logSignal(tr("倒计时：开始计时，时长为：") + QString::number(maxTime));
     }
+
     // 停止倒计时
     void stopCountDown() {
         timer->stop();

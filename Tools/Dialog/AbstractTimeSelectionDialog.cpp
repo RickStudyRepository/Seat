@@ -4,28 +4,52 @@
 AbstractTimeSelectionDialog::AbstractTimeSelectionDialog(QWidget *parent)
     : QDialog(parent)
 {
-    // 设置对话框大小
-    setMinimumSize(290, 130);
-    // 设置为只能当前窗口活动
-    setWindowModality(Qt::ApplicationModal);
+    initDialog();
+    // 初始化开始结束时间标签
+    initTimeLabels();
+    // 初始化开始结束时间下拉列表
+    initTimeComboBoxes();
     // 绑定按钮槽函数
-    initButton();
+    initButtons();
     // 初始化布局
     initLayout();
     // 初始化消息提示框
     initAutoCloseMessageBox();
+}
+
+void AbstractTimeSelectionDialog::initDialog() {
+    // 设置对话框大小
+    setMinimumSize(290, 130);
+    // 设置为只能当前窗口活动
+    setWindowModality(Qt::ApplicationModal);
     // 设置字体
     setFont(FontFactory::dialogFont());
     // 若关闭窗口，则发送未选择时间段信号
     connect(this, SIGNAL(finished(int)), this, SLOT(cancel()));
 }
 
-void AbstractTimeSelectionDialog::initButton() {
+void AbstractTimeSelectionDialog::initTimeLabels() {
+    startTimeLabel = new QLabel(tr("开始时间"), this);
+    endTimeLabel = new QLabel(tr("结束时间"), this);
+}
+
+void AbstractTimeSelectionDialog::initTimeComboBoxes() {
+    startTime = new QComboBox(this);
+    endTime = new QComboBox(this);
+}
+
+void AbstractTimeSelectionDialog::initButtons() {
+    // 确认按钮
+    okButton = new QPushButton(tr("确认"));
     connect(okButton, SIGNAL(released()), this, SLOT(verifyTimeScope()));
+
+    // 取消按钮
+    cancelButton = new QPushButton(tr("取消"));
     connect(cancelButton, SIGNAL(released()), this, SLOT(cancel()));
 }
 
 void AbstractTimeSelectionDialog::initLayout() {
+    layout = new QGridLayout(this);
     layout->addWidget(startTimeLabel, 0, 0, 1, 2);
     layout->addWidget(startTime, 0, 2, 1, 2);
     layout->addWidget(endTimeLabel, 1, 0, 1, 2);
@@ -36,6 +60,7 @@ void AbstractTimeSelectionDialog::initLayout() {
 }
 
 void AbstractTimeSelectionDialog::initAutoCloseMessageBox() {
+    autoCloseMsgBox = new AutoCloseMessageBox(this);
     // 设置为警告提示
     autoCloseMsgBox->setIcon(QMessageBox::Warning);
     autoCloseMsgBox->setDefaultButton(QMessageBox::Ok);

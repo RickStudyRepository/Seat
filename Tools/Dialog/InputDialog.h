@@ -31,11 +31,12 @@ public:
         : QDialog(parent) {
         // 窗体属性设置
         setMinimumSize(290, 130);
+        setFont(FontFactory::dialogFont());
+
         initTipLabel();
         initButton();
         initLineEdit();
         initLayout();
-        setFont(FontFactory::dialogFont());
     }
 
     void setLineEditPlaceholderText(QString placeHolderText) {

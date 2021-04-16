@@ -17,12 +17,14 @@ AppointmentRecord::AppointmentRecord(QWidget *parent) : QWidget(parent)
 }
 
 void AppointmentRecord::initLayout() {
+    layout  = new QVBoxLayout(this);
     layout->addWidget(appointmentRecord);
     layout->setMargin(0);
     setLayout(layout);
 }
 
 void AppointmentRecord::initAppointmentRecord() {
+    appointmentRecord = new QTableWidget(this);
     // 设置表格行属性
     // 隐藏垂直表头
     appointmentRecord->verticalHeader()->setVisible(false);
@@ -33,7 +35,7 @@ void AppointmentRecord::initAppointmentRecord() {
 
     // 设置表格列属性
     // 设置表格列数
-    appointmentRecord->setColumnCount(columnCount);
+    appointmentRecord->setColumnCount(ConstValue::appointmentRecordTableColumn);
     // 设置列宽度
     // 座位号列宽
     appointmentRecord->setColumnWidth(0, 100);
@@ -70,12 +72,14 @@ void AppointmentRecord::initAppointmentRecord() {
 }
 
 void AppointmentRecord::initConfirmDialog() {
+    confirmDialog = new ConfirmDialog(this);
     confirmDialog->setWindowTitle(tr("确认取消预约"));
     confirmDialog->setConfirmButtonText(tr("我要取消"));
     connect(confirmDialog, SIGNAL(confirmed()), this, SLOT(cancelAppointment()));
 }
 
 void AppointmentRecord::initContinueDialog() {
+    continueTimeDialog = new ContinueTimeDialog(this);
     connect(
         continueTimeDialog,
         SIGNAL(sendTimeScope(AliasName::TimeScope)),
@@ -183,12 +187,12 @@ void AppointmentRecord::cancelAppointment() {
 
 void AppointmentRecord::callContinueDialog(int rowNum) {
     emit logSignal(tr("预约记录：呼出选择续约时间对话框"));
-    continueNum = rowNum;
+    continueRowNum = rowNum;
     // 获取对应预约的预约时间范围
-    AliasName::TimeScope currentTimeScope = Tools::databaseTimeToTimeScope(appointments[continueNum].time);
+    AliasName::TimeScope currentTimeScope = Tools::databaseTimeToTimeScope(appointments[continueRowNum].time);
     // TODO:call database here
     // 从数据库中获取该座位的可用时间段
-    AliasName::TimeScopes availableTimes = Database::getAvailableTimesOf(appointments[continueNum].seatNum);
+    AliasName::TimeScopes availableTimes = Database::getAvailableTimesOf(appointments[continueRowNum].seatNum);
     // 设置当前选定的时间
     continueTimeDialog->setCurrentTimeScope(currentTimeScope);
     // 设置可用时间范围并呼出对话框
@@ -196,20 +200,20 @@ void AppointmentRecord::callContinueDialog(int rowNum) {
 }
 
 void AppointmentRecord::continueAppointment(AliasName::TimeScope continueTimeScope) {
-    std::string oldTime = appointments[continueNum].time;
-    std::string newTime = appointments[continueNum].time;
+    std::string oldTime = appointments[continueRowNum].time;
+    std::string newTime = appointments[continueRowNum].time;
     // 更新内存中的结束时间
     newTime.replace(17, 5, Tools::intToTimeString(continueTimeScope.second).toStdString());
-    appointments[continueNum].time = newTime;
+    appointments[continueRowNum].time = newTime;
     // 更新表格内容
     // TODO:这里为什么不能使用itemAt方法获取相应的单元格内容呢
-    appointmentRecord->item(continueNum, 1)->setText(tr(newTime.c_str()));
+    appointmentRecord->item(continueRowNum, 1)->setText(tr(newTime.c_str()));
     // 更新数据库的结束时间
     // TODO:call database here
-    Database::continueAppointment(appointments[continueNum].id, newTime);
+    Database::continueAppointment(appointments[continueRowNum].id, newTime);
     emit logSignal(
                 tr("预约记录：续约预约ID号为：") +
-                QString::number(appointments[continueNum].id) +
+                QString::number(appointments[continueRowNum].id) +
                 tr("的预约\n") +
                 tr("旧的时间：") + QString::fromStdString(oldTime) + tr("\n") +
                 tr("新的时间：") + QString::fromStdString(newTime)

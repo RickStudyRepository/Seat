@@ -17,7 +17,7 @@ class AppointmentRecord : public QWidget
     Q_OBJECT
 private:
     // 布局
-    QVBoxLayout* layout = new QVBoxLayout(this);
+    QVBoxLayout* layout;
     void initLayout();
     // 预约人学号
     QString studentNum;
@@ -25,24 +25,22 @@ private:
     AliasName::Appointments appointments;
     // 水平表头内容
     QStringList headStringList;
-    // 表格列数
-    const int columnCount = 3;
     // 表格
-    QTableWidget* appointmentRecord = new QTableWidget(this);
+    QTableWidget* appointmentRecord;
     // 初始化表格格式
     void initAppointmentRecord();
     // 调整单元格格式
     void formatTableItem(QTableWidgetItem* item);
 
     // 确认取消预约对话框
-    ConfirmDialog* confirmDialog = new ConfirmDialog(this);
+    ConfirmDialog* confirmDialog;
     void initConfirmDialog();
     int cancelRowNum;
 
     // 续约对话框
-    ContinueTimeDialog* continueTimeDialog = new ContinueTimeDialog(this);
+    ContinueTimeDialog* continueTimeDialog;
     void initContinueDialog();
-    int continueNum;
+    int continueRowNum;
 
     // 绑定日志信号槽
     void connectLogString();

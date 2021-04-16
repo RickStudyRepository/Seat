@@ -7,10 +7,8 @@ MainWindow::MainWindow(QWidget *parent)
 {
     // 默认设置是否正在前往管理员界面为false
     isGoingAdminPage = false;
-    setWindowTitle(appName);
-    setWindowIcon(appIcon);
-    setFixedSize(fixedSize);
     initRFID();
+    initWindowBasicProperty();
     initAdminPage();
     initHomePage();
     initOperationPage();
@@ -24,6 +22,12 @@ MainWindow::MainWindow(QWidget *parent)
 
 void MainWindow::initRFID() {
     this->rfid = RFID::getRFID();
+}
+
+void MainWindow::initWindowBasicProperty() {
+    setWindowTitle(ConstValue::appName);
+    setWindowIcon(ConstValue::appIcon);
+    setFixedSize(ConstValue::windowSize);
 }
 
 // 初始化管理员界面
@@ -70,6 +74,7 @@ void MainWindow::closeEvent(QCloseEvent *closeEvent) {
 
 // 初始化布局
 void MainWindow::initLayout() {
+    layout = new QVBoxLayout(this);
     layout->addWidget(adminPage);
     layout->addWidget(homePage);
     layout->addWidget(operationPage);

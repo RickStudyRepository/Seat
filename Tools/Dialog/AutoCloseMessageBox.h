@@ -13,8 +13,14 @@ class AutoCloseMessageBox : public QMessageBox {
 public:
     AutoCloseMessageBox(QWidget* parent = NULL)
         : QMessageBox(parent) {
+        // 计时器初始化
+        timer = new QTimer(this);
         connect(timer, SIGNAL(timeout()), this, SLOT(autoClose()));
+
+        // 如果用户主动关闭了对话框，那么也要停止计时
         connect(this, SIGNAL(finished(int)), timer, SLOT(stop()));
+
+        // 设置字体
         setFont(FontFactory::dialogFont());
     }
 
@@ -26,7 +32,7 @@ public:
     }
 
 private:
-    QTimer* timer = new QTimer(this);
+    QTimer* timer;
 
 public slots:
     void autoClose() {
