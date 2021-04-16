@@ -1,6 +1,10 @@
 #ifndef CONSTVALUE_H
 #define CONSTVALUE_H
 
+#include "MacroDefinition.h"
+
+using namespace MacroDefinition;
+
 namespace ConstValue {
     // 预约状态
     const std::string UsedSeat = "已履约";
@@ -24,6 +28,15 @@ namespace ConstValue {
 
     // 超级管理员密码
     const std::string password = "123456";
+
+    // 读卡或写卡最大重试次数
+    const unsigned short maxTryTimeOnCard = 10;
+    // RFID卡片的默认密码
+    const unsigned char rfidPassword[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+    // RFID默认操作的扇区号
+    const uint32 sectorNum = 0;
+    // RFID默认操作的块号
+    const uint32 blockNum = 1;
 }
 
 #endif // CONSTVALUE_H

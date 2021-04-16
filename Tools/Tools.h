@@ -4,9 +4,14 @@
 #include <QString>
 #include <QDate>
 #include <QDateTime>
+#include <QStringList>
 #include <cstdlib>
 #include <vector>
 #include "AliasName.h"
+#include "MacroDefinition.h"
+#include "../RFID/TTY/tty.h"
+
+using namespace MacroDefinition;
 
 class Tools {
 public:
@@ -97,6 +102,70 @@ public:
             result.push_back(temp);
         }
         return result;
+    }
+
+    // 以下方法从示例程序public.h文件引入
+    /**
+     * 将十六进制的8位无符号整数转换为十六进制的字符串
+     * @param id: QString&, 转换结果将会保存在这里
+     * @param buf: uint8*, 注意到前面的宏定义，这里实际上是将字符数组当作8位无符号整数数组使用了
+     * @param len: int, 原十六进制数字的长度
+     */
+    static void HexToQString(QString &id, uint8* buf, int len) {
+        id.clear();
+        for(int i=0; i<len; i++) {
+            /**
+             * %1类似于printf的%d参数，格式化字符串
+             * arg方法的传入参数将替换格式化字符串中的%1
+             * 这里arg方法的涵义是将一个8位无符号整数转换为字符串，
+             * 这个字符串的长度是2，右对齐，因为宽度参数是正数，
+             * 传入的整数是16进制的，空余的位置使用第四个参数指明的字符填充
+             */
+            id = id.append(QString("%1").arg(buf[i], 2, 16, QLatin1Char('0')).toUpper());
+        }
+    }
+
+    /**
+     * 将十六进制的字符串转换为十六进制的8位无符号整数
+     * @param id: QString&, 转换结果将会保存在这里
+     * @param buf: uint8*, 注意到前面的宏定义，这里实际上是将字符数组当作8位无符号整数数组使用了
+     * @param len: int, 原十六进制数字的长度
+     * @return 返回存储十六进制数组的长度
+     */
+    static uint8 QStringToHex(QString &id, uint8* buf, uint8 len) {
+        int strLen = id.length();
+        if((strLen + 1) / 2 < len) {
+            len = (strLen + 1) / 2;
+        }
+        for(uint8 i = 0; i < len; i++) {
+            /**
+             * mid方法是返回一个从`i<<1(也就是2 * i)`开始长度为2的子字符串，
+             * 这里使用2 * i的原因可能是十六进制数转换为字符串的时候每一位的前面都多一个0
+             * toInt将该子字符串转化为一个16进制的整数，
+             * 若转换时有异常发生，将会把第一个参数指向的一个bool变量置为false，
+             * 这里传入了0，即Q_NULLPTR，也就是不关心转换结果
+             */
+            buf[i] = id.mid(i << 1, 2).toInt(0, 16);
+        }
+        return len;
+    }
+
+    /**
+     * @brief ActuatorControl, 这个像是控制串口的一个方法，原示例程序中没有使用到这个方法
+     * @param sta
+     */
+    static void ActuatorControl(uint8 sta) {
+        uint8* p = tty[COM2_ID].txbuf;
+        tty[COM2_ID].txlen = 7;
+
+        p[0] = 0xFE;     // SOF
+        p[1] = 0x03;     // LEN
+        p[2] = 0xD2;    // CMD
+        p[3] = 0xFF;     // DATA
+        p[4] = sta;
+        p[5] = 0xFF;
+        p[6] = 0x0A;      // EOF
+        uart_write(COM2_ID);
     }
 };
 

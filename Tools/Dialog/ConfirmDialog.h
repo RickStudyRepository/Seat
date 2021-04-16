@@ -23,6 +23,7 @@ public:
         // 信号和槽绑定
         connect(confirmButton, SIGNAL(released()), this , SLOT(confirm()));
         connect(cancelButton, SIGNAL(released()), this, SLOT(close()));
+        connect(cancelButton, SIGNAL(released()), this, SIGNAL(cancel()));
 
         // 窗体属性设置
         setMinimumSize(290, 130);
@@ -48,7 +49,10 @@ public:
     }
 
 signals:
+    // 确认
     void confirmed();
+    // 取消
+    void cancel();
     // 日志信息信号
     void logSignal(QString);
 

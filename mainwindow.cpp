@@ -10,14 +10,20 @@ MainWindow::MainWindow(QWidget *parent)
     setWindowTitle(appName);
     setWindowIcon(appIcon);
     setFixedSize(fixedSize);
+    initRFID();
     initAdminPage();
     initHomePage();
     initOperationPage();
     initInputDialog();
     initDigitKeyBoard();
     initWarning();
+    initInfoMessageBox();
     initLayout();
     connectLogString();
+}
+
+void MainWindow::initRFID() {
+    this->rfid = RFID::getRFID();
 }
 
 // 初始化管理员界面
@@ -32,7 +38,7 @@ void MainWindow::initAdminPage() {
 // 初始化主页布局
 void MainWindow::initHomePage() {
     homePage = new HomePage(this);
-    connect(homePage, SIGNAL(gotoOperationPageSignal()), this, SLOT(gotoOperationPage()));
+    connect(homePage, SIGNAL(gotoOperationPageSignal()), this, SLOT(readStudentNum()));
     connect(homePage, SIGNAL(gotoAdminPageSignal()), this, SLOT(inputPassword()));
     // 默认显示
     homePage->gotoFront();
@@ -53,6 +59,7 @@ void MainWindow::connectLogString() {
     connect(operationPage, SIGNAL(logSignal(QString)), adminPage, SLOT(appendLog(QString)));
     connect(inputDialog, SIGNAL(logSignal(QString)), adminPage, SLOT(appendLog(QString)));
     connect(digitKeyBoard, SIGNAL(logSignal(QString)), adminPage, SLOT(appendLog(QString)));
+    connect(rfid, SIGNAL(logSignal(QString)), adminPage, SLOT(appendLog(QString)));
     connect(this, SIGNAL(logSignal(QString)), adminPage, SLOT(appendLog(QString)));
 }
 
@@ -80,7 +87,7 @@ void MainWindow::initInputDialog() {
     inputDialog->setTip(tr("密码："));
 
     connect(inputDialog, SIGNAL(confirmed(QString)), this, SLOT(verifyPassword(QString)));
-    // 停止前往管理员界面，也就是允许前往
+    // 停止前往管理员界面，也就是允许前往操作界面
     connect(inputDialog, SIGNAL(cancel()), this, SLOT(stopGoingAdminPage()));
     connect(inputDialog, SIGNAL(finished(int)), this, SLOT(stopGoingAdminPage()));
     // 当关闭对话框时，同时关闭数字键盘
@@ -98,7 +105,16 @@ void MainWindow::initDigitKeyBoard() {
 
 void MainWindow::initWarning() {
     warning = new AutoCloseMessageBox(this);
+    warning->setIcon(QMessageBox::Warning);
+    warning->setDefaultButton(QMessageBox::Ok);
     emit logSignal(tr("主窗口：初始化错误信息提示对话框"));
+}
+
+void MainWindow::initInfoMessageBox() {
+    info = new AutoCloseMessageBox(this);
+    info->setIcon(QMessageBox::Information);
+    info->setDefaultButton(QMessageBox::Ok);
+    emit logSignal(tr("主窗口：初始化信息提示对话框"));
 }
 
 void MainWindow::gotoAdminPage() {
@@ -155,15 +171,55 @@ void MainWindow::stopGoingAdminPage() {
     emit logSignal(tr("主窗口：解开前往其他窗口的限制"));
 }
 
-// 切换到操作界面
-void MainWindow::gotoOperationPage() {
-    // 如果正在前往管理员界面，则直接返回
+// 读取学号
+void MainWindow::readStudentNum() {
+    // 如果正在进入管理员界面，则不响应
     if (isGoingAdminPage == true) {
         return;
     }
+
+    // 让首页不再响应鼠标键盘事件，防止用户重复操作
+    homePage->setEnabled(false);
+
+    // 提示用户刷卡
+    info->showAndClose(5, tr("请刷卡"), tr("请将你的ID卡放置在感应区"));
+
+    // 通过RFID读取学号
+    // 临时存储读取的学号
+    QString studentNum;
+    // 读取结果
+    bool success = false;
+    // 最大尝试次数，基于内部实现，每一次的等待时间大概是1s
+    unsigned short maxTryTime = ConstValue::maxTryTimeOnCard;
+    do {
+        success = rfid->readStudentNum(studentNum);
+        maxTryTime -= 1;
+    } while(success == false && maxTryTime > 0);
+
+    // 如果提示用户刷卡的对话框仍然可见，则关闭
+    if (info->isVisible()) {
+        info->close();
+    }
+
+    // 读取失败，发出错误提示
+    if (success == false) {
+        warning->showAndClose(5, tr("读卡失败"), tr("请重试进入并刷卡"));
+        emit logSignal(tr("主窗口：进入操作界面时，获取ID卡内学号失败"));
+    }
+    // 读取成功，切到操作界面
+    else {
+        gotoOperationPage(studentNum);
+        emit logSignal(tr("主窗口：进入操作界面时，获取ID卡内学号成功"));
+    }
+
+    // 恢复首页对鼠标和键盘事件的响应
+    homePage->setEnabled(true);
+}
+
+// 切换到操作界面
+void MainWindow::gotoOperationPage(QString studentNum) {
     homePage->gotoBack();
-    // TODO:这里要通过RFID标签获取学号
-    operationPage->gotoFront(tr("181110305"));
+    operationPage->gotoFront(studentNum);
     emit logSignal(tr("主窗口：进入操作界面"));
 }
 

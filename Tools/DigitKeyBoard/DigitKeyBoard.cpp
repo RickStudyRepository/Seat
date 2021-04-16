@@ -24,6 +24,10 @@ DigitKeyBoard::DigitKeyBoard(QWidget *parent)
     setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
 }
 
+DigitKeyBoard::~DigitKeyBoard() {
+    delete DigitKeyBoard::singleKeyBoard;
+}
+
 void DigitKeyBoard::initButtons() {
     for (int i = 0; i < 10; i++) {
         numberButtons.push_back(new QPushButton(QString::number(i), this));

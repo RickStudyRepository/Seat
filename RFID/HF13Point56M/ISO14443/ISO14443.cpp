@@ -1,18 +1,17 @@
-#include "../rc632/rc632.h"
-#include "../../tty/tty.h"
-#include "iso14443.h"
+#include "../RC632/RC632.h"
+#include "../../TTY/tty.h"
+#include "ISO14443.h"
 #include <unistd.h>
+#include <QDebug>
 
 ISO14443::ISO14443(QObject *parent) :
     QObject(parent)
 {
 }
 
-int ISO14443::Sel14443Protocol(void)
-{
+int ISO14443::Sel14443Protocol(void) {
     int cnt=5;
-    while(cnt--)
-    {
+    while(cnt--) {
         if(RC632_OK == CloseAnt())
         {
             if(RC632_OK == SelISO14443A())
@@ -37,6 +36,7 @@ int ISO14443::SelISO14443A(void)     // 设置RC632工作方式为ISO14443_A
 
     return ReceiveFrame(100000, RC632_CMD_CONFIG_ISOTYPE);
 }
+
 int ISO14443::OpenAnt(void)    // 打开天线
 {
     uint8 data[1];
@@ -47,6 +47,7 @@ int ISO14443::OpenAnt(void)    // 打开天线
 
     return ReceiveFrame(100000, RC632_CMD_ANT_CONTROL);
 }
+
 int ISO14443::CloseAnt(void)   // 关闭天线
 {
     uint8 data[1];
@@ -57,6 +58,7 @@ int ISO14443::CloseAnt(void)   // 关闭天线
 
     return ReceiveFrame(100000, RC632_CMD_ANT_CONTROL);
 }
+
 int ISO14443::RequestA(uint8 mode)  // 寻感应区内所有符合14443A标准的卡
 {
     uint8 data[1];
@@ -67,6 +69,7 @@ int ISO14443::RequestA(uint8 mode)  // 寻感应区内所有符合14443A标准�
 
     return ReceiveFrame(1000000, RC632_CMD_REQUEST_A);
 }
+
 int ISO14443::TagSleep(void)
 {
     uint8 *data;
@@ -76,6 +79,7 @@ int ISO14443::TagSleep(void)
 
     return ReceiveFrame(1000000, RC632_CMD_SLEEP);
 }
+
 int ISO14443::AnticollA(void)   // 发送A卡防冲撞命
 {
     uint8 data[1];
@@ -86,6 +90,7 @@ int ISO14443::AnticollA(void)   // 发送A卡防冲撞命
 
     return ReceiveFrame(1000000, RC632_CMD_ANTICOLL);
 }
+
 int ISO14443::SelectA(uint8 *tagId)    // 发送A卡锁定命令
 {
     tty[COM1_ID].txlen = RC632_BuildReqFrame(tty[COM1_ID].txbuf, RC632_CMD_SELECT, tagId, 4);
@@ -93,6 +98,7 @@ int ISO14443::SelectA(uint8 *tagId)    // 发送A卡锁定命令
 
     return ReceiveFrame(1000000, RC632_CMD_SELECT);
 }
+
 int ISO14443::Authentication(uint8 *password, uint8 sectorId)    // 发送A卡验证密钥命令
 {
     uint8 data[8];
@@ -105,6 +111,7 @@ int ISO14443::Authentication(uint8 *password, uint8 sectorId)    // 发送A卡�
 
     return ReceiveFrame(1000000, RC632_CMD_AUTHENTICATION);
 }
+
 int ISO14443::M1Init(uint8 sectorId, uint8 blockId, uint32 val)    //  M1钱包初始化
 {
     uint8 data[5];
@@ -118,6 +125,7 @@ int ISO14443::M1Init(uint8 sectorId, uint8 blockId, uint32 val)    //  M1钱包�
 
     return ReceiveFrame(1000000, RC632_CMD_M1INITVAL);
 }
+
 int ISO14443::M1Increment(uint8 sectorId, uint8 blockId, uint32 val)   // M1钱包充值
 {
     uint8 data[5];
@@ -131,6 +139,7 @@ int ISO14443::M1Increment(uint8 sectorId, uint8 blockId, uint32 val)   // M1钱�
 
     return ReceiveFrame(1000000, RC632_CMD_M1INCREMENT);
 }
+
 int ISO14443::M1Decrement(uint8 sectorId, uint8 blockId, uint32 val)   // M1钱包扣费
 {
     uint8 data[5];
@@ -145,6 +154,7 @@ int ISO14443::M1Decrement(uint8 sectorId, uint8 blockId, uint32 val)   // M1钱�
 
     return ReceiveFrame(1000000, RC632_CMD_M1DECREMENT);
 }
+
 int ISO14443::M1Balance(uint8 sectorId, uint8 blockId)   // M1钱包余额
 {
     uint8 data[1];
@@ -166,6 +176,7 @@ int ISO14443::MemRead(uint8 sectorId, uint8 blockId)
 
     return ReceiveFrame(1000000, RC632_CMD_M1READ);
 }
+
 int ISO14443::MemWrite(uint8 sectorId, uint8 blockId, uint8 *buf, uint8 len)
 {
     uint8 data[17];
@@ -289,6 +300,7 @@ uint8 ISO14443::RFID_InventoryALL(void)
     }
     return ret;
 }
+
 uint8 ISO14443::RFID_InventoryIDL(void)
 {
     uint8 ret = RC632_FAULT254;
@@ -303,6 +315,7 @@ uint8 ISO14443::RFID_InventoryIDL(void)
     }
     return ret;
 }
+
 uint8 ISO14443::RFID_Sleep(void)
 {
     uint8 ret = RC632_FAULT254;
@@ -316,12 +329,15 @@ uint8 ISO14443::RFID_M1Init(const int sectorId, const int blockId, const uint32 
 {
     uint8 ret = RC632_FAULT254;
     if(RC632_OK == RFID_Authentication(password, sectorId)){
+        qDebug() << tr("successfully Authentication");
         if(RC632_OK == M1Init(sectorId, blockId, money)){
+            qDebug() << tr("successfully init");
             ret  = RC632_OK;
         }
     }
     return ret;
 }
+
 uint8 ISO14443::RFID_M1Increment(const int sectorId, const int blockId, const uint32 money, uint8 *password)
 {
     uint8 ret = RC632_FAULT254;
@@ -332,6 +348,7 @@ uint8 ISO14443::RFID_M1Increment(const int sectorId, const int blockId, const ui
     }
     return ret;
 }
+
 uint8 ISO14443::RFID_M1Decrement(const int sectorId, const int blockId, const uint32 money, uint8 *password)
 {
     uint8 ret = RC632_FAULT254;
@@ -342,19 +359,24 @@ uint8 ISO14443::RFID_M1Decrement(const int sectorId, const int blockId, const ui
     }
     return ret;
 }
+
 uint8 ISO14443::RFID_M1Balance(const int sectorId, const int blockId, uint8 *password)
 {
     uint8 ret = RC632_FAULT254;
     if(RC632_OK == RFID_Authentication(password, sectorId)){
+        qDebug() << tr("successfully authentication");
         if(RC632_OK == M1Balance(sectorId, blockId)){
+            qDebug() << tr("successfully get balance");
             uint8 *p = tty[COM1_ID].rxbuf;
             p += 9;
             balance = BUILD_UINT32(p[0], p[1], p[2], p[3]);
+            qDebug() << tr("successfully set balance");
             ret  = RC632_OK;
         }
     }
     return ret;
 }
+
 uint8 ISO14443::RFID_MemRead(const int sectorId, const int blockId, uint8 *password)
 {
     uint8 ret = RC632_FAULT254;
@@ -368,6 +390,7 @@ uint8 ISO14443::RFID_MemRead(const int sectorId, const int blockId, uint8 *passw
     }
     return ret;
 }
+
 uint8 ISO14443::RFID_MemWrite(const int sectorId, const int blockId, uint8 *buf, uint8 len, uint8 *password)
 {
     uint8 ret = RC632_FAULT254;

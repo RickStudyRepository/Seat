@@ -13,6 +13,11 @@
 #include "Tools/DigitKeyBoard/DigitKeyBoard.h"
 #include "Tools/Dialog/InputDialog.h"
 #include "Tools/Dialog/AutoCloseMessageBox.h"
+#include "Tools/ConstValue.h"
+
+
+// RFID相关
+#include "RFID/RFID.h"
 
 class MainWindow : public QWidget
 {
@@ -21,6 +26,12 @@ class MainWindow : public QWidget
 public:
     MainWindow(QWidget *parent = NULL);
 
+// RFID相关
+private:
+    RFID* rfid;
+    void initRFID();
+
+// 界面相关
 private:
     // 窗口标题
     const QString appName = tr("Seat");
@@ -43,6 +54,10 @@ private:
     // 密码错误提示框
     AutoCloseMessageBox* warning;
     void initWarning();
+
+    // 刷卡提示框
+    AutoCloseMessageBox* info;
+    void initInfoMessageBox();
 
     bool isGoingAdminPage;
     // 超级管理员界面
@@ -79,8 +94,11 @@ private slots:
     void callDigitKeyBoard(QLineEdit* output);
     // 停止进入管理员界面
     void stopGoingAdminPage();
+
+    // 进入操作界面前，读取卡内学号
+    void readStudentNum();
     // 切换到操作界面
-    void gotoOperationPage();
+    void gotoOperationPage(QString studentNum);
     // 返回到首页界面
     void returnHomePageFromOperationPage();
     void returnHomePageFromAdminPage();

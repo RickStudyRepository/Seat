@@ -2,11 +2,12 @@
 #define ISO14443_H
 
 #include <QObject>
-#include "../../public/public.h"
-#include "../rc632/rc632.h"
+#include "../RC632/RC632.h"
+#include "../../../Tools/MacroDefinition.h"
 
-class ISO14443 : public QObject
-{
+using namespace MacroDefinition;
+
+class ISO14443 : public QObject {
     Q_OBJECT
 public:
     explicit ISO14443(QObject *parent = 0);
@@ -39,12 +40,12 @@ public:
     uint8 RFID_InventoryIDL(void);
     uint8 RFID_Sleep(void);
 
-    uint8 RFID_M1Init(const int sectorId, const int blockId, const uint32 money, uint8 *password=NULL);
-    uint8 RFID_M1Increment(const int sectorId, const int blockId, const uint32 money, uint8 *password=NULL);
-    uint8 RFID_M1Decrement(const int sectorId, const int blockId, const uint32 money, uint8 *password=NULL);
-    uint8 RFID_M1Balance(const int sectorId, const int blockId, uint8 *password=NULL);
-    uint8 RFID_MemRead(const int sectorId, const int blockId, uint8 *password=NULL);
-    uint8 RFID_MemWrite(const int sectorId, const int blockId, uint8 *buf, uint8 len, uint8 *password=NULL);
+    uint8 RFID_M1Init(const int sectorId, const int blockId, const uint32 money, uint8 *password = NULL);
+    uint8 RFID_M1Increment(const int sectorId, const int blockId, const uint32 money, uint8 *password = NULL);
+    uint8 RFID_M1Decrement(const int sectorId, const int blockId, const uint32 money, uint8 *password = NULL);
+    uint8 RFID_M1Balance(const int sectorId, const int blockId, uint8 *password = NULL);
+    uint8 RFID_MemRead(const int sectorId, const int blockId, uint8 *password = NULL);
+    uint8 RFID_MemWrite(const int sectorId, const int blockId, uint8 *buf, uint8 len, uint8 *password = NULL);
 
 signals:
     

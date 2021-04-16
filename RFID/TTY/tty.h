@@ -2,38 +2,30 @@
 #define TTY_H
 
 #include <termios.h>
+#include "../../Tools/MacroDefinition.h"
 
-#define TTY_ON    0x01
-#define TTY_OFF   0x00
+using namespace MacroDefinition;
 
-#define MAX_COM_NUM  2
-#define COM1_ID    0
-#define COM2_ID    1
-// 这里指明串口名称，如果使用USB转串口，需要设置为相应的USB设备名
-#define COM1 "/dev/ttymxc4"
-#define COM2 "/dev/ttyS3"
-
-typedef struct tty_info
-{
+typedef struct tty_info {
     int fd;
     int baud;
     long timeout;  //usec
     char *name;
-    unsigned char txbuf[256];
-    unsigned char rxbuf[256];
-    unsigned char txlen;   // the length of txbuf
-    unsigned char rxlen;   // the length of rxbuf
+    uint8 txbuf[256];
+    uint8 rxbuf[256];
+    uint8 txlen;   // the length of txbuf
+    uint8 rxlen;   // the length of rxbuf
     int status;              //  1:  uart open    0: uart close
     int update;             //  is buf updated?
-}tty_info_t;
+} tty_info_t;
 
-extern tty_info_t  tty[MAX_COM_NUM];
+extern tty_info_t tty[MAX_COM_NUM];
 
 extern int tty_init(const char* _name, int _baud);
 extern int tty_end(int _fd);
-extern int tty_read(int _fd,unsigned char *buf,int nbytes);
-extern int tty_write(int _fd,unsigned char *buf,int nbytes);
-extern int tty_writecmd(int _fd,unsigned char *buf,int nbytes);
+extern int tty_read(int _fd, uint8* buf, int nbytes);
+extern int tty_write(int _fd, uint8* buf, int nbytes);
+extern int tty_writecmd(int _fd, uint8* buf, int nbytes);
 extern void tty_fflush(int _fd);
 
 

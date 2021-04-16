@@ -19,6 +19,8 @@ public:
     // 定位输出文本框
     void startInput(QLineEdit* output);
 
+    ~DigitKeyBoard();
+
 private:
     DigitKeyBoard(QWidget* parent = NULL);
     // 单例变量

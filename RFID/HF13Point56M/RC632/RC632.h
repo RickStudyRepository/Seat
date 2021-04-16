@@ -1,7 +1,9 @@
 #ifndef RC632_H
 #define RC632_H
 
-#include "../../public/public.h"
+#include "../../../Tools/MacroDefinition.h"
+
+using namespace MacroDefinition;
 
 /*******************************************/
 #define RC632_STA_SOP1        0x01

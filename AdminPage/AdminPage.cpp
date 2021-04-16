@@ -9,6 +9,8 @@
 AdminPage::AdminPage(QWidget *parent)
     : QWidget(parent), logTextEdit(new QTextEdit(this)) {
     password = ConstValue::password;
+
+    initRFID();
     initSystemName();
     initHorizontalLine();
     initAuthorName();
@@ -19,7 +21,14 @@ AdminPage::AdminPage(QWidget *parent)
     initConfirmDialog();
     initDigitKeyBoard();
     initWarning();
+    initInfoMessageBox();
     initLayout();
+    setFixedSize(800, 480);
+}
+
+void AdminPage::initRFID() {
+    rfid = RFID::getRFID();
+    connect(rfid, SIGNAL(logSignal(QString)), this, SLOT(appendLog(QString)));
 }
 
 void AdminPage::initLayout() {
@@ -86,6 +95,8 @@ void AdminPage::initInputDialog() {
     connect(inputDialog, SIGNAL(confirmed(QString)), this, SLOT(confirmWriteStudentNum(QString)));
     connect(inputDialog, SIGNAL(showKeyBoardSignal(QLineEdit*)), this, SLOT(callDigitKeyBoard(QLineEdit*)));
     connect(inputDialog, SIGNAL(finished(int)), this, SLOT(hideDigitKeyBoard()));
+    connect(inputDialog, SIGNAL(finished(int)), this, SLOT(enableInitCardContentButton()));
+    connect(inputDialog, SIGNAL(cancel()), this, SLOT(enableInitCardContentButton()));
 }
 
 void AdminPage::initDigitKeyBoard() {
@@ -98,12 +109,20 @@ void AdminPage::initConfirmDialog() {
     confirmDialog->setConfirmButtonText(tr("确认写入"));
     confirmDialog->setWindowTitle(tr("写入学号确认"));
     connect(confirmDialog, SIGNAL(confirmed()), this, SLOT(writeStudentNum()));
+    connect(confirmDialog,  SIGNAL(cancel()), this, SLOT(enableInitCardContentButton()));
+    connect(confirmDialog, SIGNAL(finished(int)), this, SLOT(enableInitCardContentButton()));
 }
 
 void AdminPage::initWarning() {
     warning = new AutoCloseMessageBox(this);
     warning->setIcon(QMessageBox::Warning);
     warning->setDefaultButton(QMessageBox::Ok);
+}
+
+void AdminPage::initInfoMessageBox() {
+    info = new AutoCloseMessageBox(this);
+    info->setIcon(QMessageBox::Information);
+    info->setDefaultButton(QMessageBox::Ok);
 }
 
 void AdminPage::appendLog(QString logString) {
@@ -118,11 +137,18 @@ void AdminPage::appendLog(QString logString) {
     }
 }
 
+void AdminPage::enableInitCardContentButton() {
+    initCardContent->setEnabled(true);
+}
+
 bool AdminPage::verifyPassword(QString password) {
     return this->password == password.toStdString();
 }
 
 void AdminPage::inputStudentNum() {
+    // 将初始化卡片信息按钮置为不可用，阻止用户重复操作
+    initCardContent->setEnabled(false);
+
     // 清空文本框内的内容
     inputDialog->clearLineEdit();
     inputDialog->show();
@@ -169,8 +195,35 @@ void AdminPage::confirmWriteStudentNum(QString studentNum) {
 }
 
 void AdminPage::writeStudentNum() {
-    appendLog(tr("向卡片内写入学号：") + studentNum);
-    // TODO: call RIFD here
+    // 提示用户刷卡
+    info->showAndClose(5, tr("请刷卡"), tr("请把ID卡放到感应区"));
+
+    // 最大尝试次数
+    unsigned short maxTryTime = ConstValue::maxTryTimeOnCard;
+    // 写卡是否成功
+    bool success = false;
+    do {
+        success = rfid->writeStudentNum(studentNum);
+        maxTryTime -= 1;
+    } while (success == false && maxTryTime > 0);
+
+    // 如果提示信息对话框仍然可见，则关闭
+    if (info->isVisible()) {
+        info->close();
+    }
+
+    // 写入失败，发出错误提示
+    if (success == false) {
+        warning->showAndClose(5, tr("写入失败"), tr("请重新录入学号并刷卡重试"));
+        appendLog(tr("管理员界面：写入学号失败"));
+    }
+    // 写入成功，写入日志
+    else {
+        appendLog(tr("管理员界面：向卡片内写入学号：") + studentNum + tr("成功"));
+    }
+
+    // 写入完成，将初始化卡片信息按钮置为可用
+    enableInitCardContentButton();
 }
 
 void AdminPage::gotoFront(QPoint parentPos) {

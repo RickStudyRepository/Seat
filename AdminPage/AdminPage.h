@@ -13,10 +13,17 @@
 #include "../Tools/Dialog/InputDialog.h"
 #include "../Tools/Dialog/ConfirmDialog.h"
 #include "../Tools/Dialog/AutoCloseMessageBox.h"
+#include "../RFID/RFID.h"
 
 class AdminPage : public QWidget
 {
     Q_OBJECT
+// RFID相关
+private:
+    RFID* rfid;
+    void initRFID();
+
+// 界面相关
 private:
     // 管理员密码
     std::string password;
@@ -55,9 +62,12 @@ private:
     // 确认写入对话框
     ConfirmDialog* confirmDialog;
     void initConfirmDialog();
-    // 自动关闭的提示对话框
+    // 自动关闭的错误信息提示对话框
     AutoCloseMessageBox* warning;
     void initWarning();
+    // 自动关闭的信息提示对话框
+    AutoCloseMessageBox* info;
+    void initInfoMessageBox();
 
     // 布局
     QGridLayout* layout = NULL;
@@ -97,6 +107,9 @@ private slots:
 
     // 追加日志
     void appendLog(QString logString);
+
+    // 将初始化卡片信息的按钮置为可用
+    void enableInitCardContentButton();
 };
 
 #endif // ADMINPAGE_H
