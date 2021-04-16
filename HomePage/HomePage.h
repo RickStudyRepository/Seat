@@ -8,12 +8,13 @@
 class HomePage : public QWidget {
     Q_OBJECT
 private:
-    AdminLabel* label = new AdminLabel(this);
+    AdminLabel* label;
 
 public:
     HomePage(QWidget* parent = NULL)
         : QWidget(parent)
     {
+        label = new AdminLabel(this);
         label->setPixmap(QPixmap(QString(":/images/HomePage.jpg")));
         connect(label, SIGNAL(otherPlaceRelease()), this, SLOT(gotoOperationPage()));
         connect(label, SIGNAL(leftUpCornerRelease()), this, SLOT(gotoAdminPage()));
