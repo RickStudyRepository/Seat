@@ -70,11 +70,12 @@ bool RFID::writeStudentNum(QString studentNum) {
         emit logSignal(tr("RFID：寻卡失败，停止初始化卡片信息"));
         return false;
     }
-    // 写入数据时需要传入16进制数
+    // 写入数据时需要传入按照HexToQString转换得到的16进制字符串转换成的十六进制数
     unsigned int uintStudentNum = studentNum.toUInt();
     // 将无符号整数按字节转换为16进制字符串
     QString hexString;
     Tools::HexToQString(hexString, (unsigned char*)(&uintStudentNum), 4);
+
     uint8 result = rfidProtocol.RFID_M1Init(
                 ConstValue::sectorNum,
                 ConstValue::blockNum,
