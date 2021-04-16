@@ -105,6 +105,9 @@ private slots:
 
     // 关闭输入密码对话框和数字键盘
     void closeInputDialogAndDigitKeyBoard();
+
+    // 处理结束程序的信号
+    void endProgram();
 };
 
 #endif // MAINWINDOW_H

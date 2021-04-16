@@ -30,7 +30,7 @@ void MainWindow::initRFID() {
 void MainWindow::initAdminPage() {
     adminPage = new AdminPage(this);
     connect(adminPage, SIGNAL(returnHomePage()), this, SLOT(returnHomePageFromAdminPage()));
-    connect(adminPage, SIGNAL(endProgram()), this, SLOT(close()));
+    connect(adminPage, SIGNAL(endProgram()), this, SLOT(endProgram()));
     // 默认隐藏
     adminPage->gotoBack();
     emit logSignal(tr("主窗口：初始化管理员界面"));
@@ -243,4 +243,10 @@ void MainWindow::closeInputDialogAndDigitKeyBoard() {
     inputDialog->close();
     digitKeyBoard->hide();
     emit logSignal(tr("主窗口：自动关闭管理员密码输入对话框并隐藏数字键盘"));
+}
+
+// TODO：使用该方法结束程序，尝试解决结束程序之后显示屏没有刷新的问题
+void MainWindow::endProgram() {
+    hide();
+    close();
 }
