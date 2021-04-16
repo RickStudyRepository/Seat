@@ -29,6 +29,9 @@ namespace ConstValue {
     // 超级管理员密码
     const std::string password = "123456";
 
+    // 操作界面自动返回首页的时间
+    const int maxDuration = 120;
+
     // 读卡或写卡最大重试次数
     const unsigned short maxTryTimeOnCard = 10;
     // RFID卡片的默认密码

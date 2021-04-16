@@ -71,7 +71,8 @@ HEADERS += \
     RFID/HF13Point56M/RC632/RC632.h \
     RFID/RFIDThread/RfidThread.h \
     RFID/TTY/tty.h \
-    RFID/RFID.h
+    RFID/RFID.h \
+    Tools/LogSave.h
 
 RESOURCES += \
     images.qrc

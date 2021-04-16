@@ -30,6 +30,7 @@ void MainWindow::initRFID() {
 void MainWindow::initAdminPage() {
     adminPage = new AdminPage(this);
     connect(adminPage, SIGNAL(returnHomePage()), this, SLOT(returnHomePageFromAdminPage()));
+    connect(adminPage, SIGNAL(endProgram()), this, SLOT(close()));
     // 默认隐藏
     adminPage->gotoBack();
     emit logSignal(tr("主窗口：初始化管理员界面"));

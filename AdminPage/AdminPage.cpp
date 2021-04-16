@@ -17,13 +17,18 @@ AdminPage::AdminPage(QWidget *parent)
     initReturnButton();
     initCardContentButton();
     initLogTextEdit();
+    initSaveLogButton();
     initInputDialog();
     initConfirmDialog();
     initDigitKeyBoard();
     initWarning();
     initInfoMessageBox();
+    initExitButton();
     initLayout();
-    setFixedSize(800, 480);
+}
+
+AdminPage::~AdminPage() {
+    saveLog();
 }
 
 void AdminPage::initRFID() {
@@ -36,11 +41,16 @@ void AdminPage::initLayout() {
     layout->addWidget(systemName, 0, 0, 1, 7);
     layout->addWidget(returnButton, 0, 7, 1, 1);
     layout->addWidget(authorName, 1, 0, 1, 4);
-    layout->addWidget(initCardContent, 1, 6, 1, 2);
+    layout->addWidget(exitButton, 1, 5, 1, 1);
+    layout->addWidget(initCardContent, 1, 6, 1, 1);
+    layout->addWidget(saveLogButton, 1, 7, 1, 1);
     layout->addWidget(horizontalLine, 2, 0, 1, 8);
-    layout->addWidget(logTextEdit, 3, 0, 9, 8);
+    layout->addWidget(logTextEdit, 3, 0, 5, 8);
     layout->setMargin(3);
     layout->setAlignment(Qt::AlignCenter);
+    for (int i = 0; i < 8; i++) {
+        layout->setColumnMinimumWidth(i, 96);
+    }
     setLayout(layout);
 }
 
@@ -66,7 +76,7 @@ void AdminPage::initHorizontalLine() {
 
 void AdminPage::initReturnButton() {
     returnButton = new QPushButton(this);
-    returnButton->setText(tr("返回主界面"));
+    returnButton->setText(tr("返回首页"));
     returnButton->setFont(FontFactory::describeFont());
     // 绑定返回的信号
     connect(returnButton, SIGNAL(released()), this, SIGNAL(returnHomePage()));
@@ -74,7 +84,7 @@ void AdminPage::initReturnButton() {
 
 void AdminPage::initCardContentButton() {
     initCardContent = new QPushButton(this);
-    initCardContent->setText(tr("初始化卡片信息"));
+    initCardContent->setText(tr("录入学号"));
     initCardContent->setFont(FontFactory::describeFont());
     connect(initCardContent, SIGNAL(released()), this, SLOT(inputStudentNum()));
 }
@@ -84,6 +94,13 @@ void AdminPage::initLogTextEdit() {
     logTextEdit->setReadOnly(true);
     logTextEdit->setMinimumHeight(375);
     logTextEdit->append(tr("这里是所有的日志信息："));
+}
+
+void AdminPage::initSaveLogButton() {
+    saveLogButton = new QPushButton(this);
+    saveLogButton->setText(tr("保存日志"));
+    saveLogButton->setFont(FontFactory::describeFont());
+    connect(saveLogButton, SIGNAL(released()), this, SLOT(saveLog()));
 }
 
 void AdminPage::initInputDialog() {
@@ -125,6 +142,13 @@ void AdminPage::initInfoMessageBox() {
     info->setDefaultButton(QMessageBox::Ok);
 }
 
+void AdminPage::initExitButton() {
+    exitButton = new QPushButton(this);
+    exitButton->setText(tr("退出程序"));
+    exitButton->setFont(FontFactory::describeFont());
+    connect(exitButton, SIGNAL(released()), this, SIGNAL(endProgram()));
+}
+
 void AdminPage::appendLog(QString logString) {
     QString nowTime = Tools::getCurrentDatetime();
     if (nowTime == previousLogTime) {
@@ -135,6 +159,11 @@ void AdminPage::appendLog(QString logString) {
         // 更新上次写入日志的时间
         previousLogTime = nowTime;
     }
+}
+
+void AdminPage::saveLog() {
+    appendLog(tr("管理员界面：保存日志到文件"));
+    logSave.writeLog(logTextEdit->toPlainText());
 }
 
 void AdminPage::enableInitCardContentButton() {

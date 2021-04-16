@@ -13,6 +13,7 @@
 #include "../Tools/Dialog/InputDialog.h"
 #include "../Tools/Dialog/ConfirmDialog.h"
 #include "../Tools/Dialog/AutoCloseMessageBox.h"
+#include "../Tools/LogSave.h"
 #include "../RFID/RFID.h"
 
 class AdminPage : public QWidget
@@ -69,6 +70,10 @@ private:
     AutoCloseMessageBox* info;
     void initInfoMessageBox();
 
+    // 结束程序
+    QPushButton* exitButton;
+    void initExitButton();
+
     // 布局
     QGridLayout* layout = NULL;
     void initLayout();
@@ -76,14 +81,25 @@ private:
     // 上次写入日志的时间
     QString previousLogTime;
 
+// 日志相关
+private:
+    LogSave logSave;
+    QPushButton* saveLogButton;
+    // 初始化日志保存按钮
+    void initSaveLogButton();
+
 public:
     explicit AdminPage(QWidget *parent = NULL);
+
+    ~AdminPage();
 
     // 校验密码
     bool verifyPassword(QString password);
 
 signals:
     void returnHomePage();
+
+    void endProgram();
 
 public slots:
     // 前往前台
@@ -110,6 +126,9 @@ private slots:
 
     // 将初始化卡片信息的按钮置为可用
     void enableInitCardContentButton();
+
+    // 保存日志槽函数
+    void saveLog();
 };
 
 #endif // ADMINPAGE_H

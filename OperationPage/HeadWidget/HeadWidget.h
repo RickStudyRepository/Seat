@@ -9,6 +9,7 @@
 #include <QIcon>
 #include "CountDown.h"
 #include "../../Tools/FontFactory.h"
+#include "../../Tools/ConstValue.h"
 
 class HeadWidget : public QWidget
 {
@@ -18,9 +19,7 @@ private:
     QLabel* logInLabel = new QLabel(this);
     // 登录提示字符串
     QString logInString = tr("欢迎您%1！今天又是美好的一天呐！");
-    // 返回倒计时
-    const int maxTime = 180;
-    CountDown* countDown = new CountDown(this, maxTime);
+    CountDown* countDown = new CountDown(this, ConstValue::maxDuration);
     // 返回首页按钮
     QPushButton* returnHomePage = new QPushButton(tr("返回"), this);
     // 布局
