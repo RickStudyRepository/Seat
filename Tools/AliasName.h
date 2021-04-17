@@ -52,6 +52,8 @@ namespace AliasName {
             return this->availableTimes.empty();
         }
     } SeatInfo;
+
+    typedef std::vector<SeatInfo> SeatInfos;
 }
 
 #endif // ALIASNAME_H
