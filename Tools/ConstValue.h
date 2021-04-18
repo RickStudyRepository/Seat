@@ -69,6 +69,9 @@ namespace ConstValue {
 
     // 数据库相关
     inline namespace Database {
+        // 学号长度
+        const size_t studentNumLength = 9;
+
         // 预约状态
         inline namespace AppoinmentStatus {
             const std::string UsedSeat = "已履约";
@@ -171,6 +174,9 @@ namespace ConstValue {
 
         // 查询相关的SQL语句模板
         inline namespace SelectSQLTemplate {
+            // 查询某位同学是否存在
+            const std::string selectStudentSql =
+                    "Select number From " + studentTableName + " Where number = %q;";
             // 查询所有的座位号
             const std::string selectAllSeatsSql =
                     "Select number From " + seatTableName + ";";
