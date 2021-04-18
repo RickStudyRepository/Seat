@@ -7,9 +7,11 @@
 #include <QPushButton>
 #include <QString>
 #include <vector>
+#include "../../Database/Database.h"
 #include "SeatWidget.h"
 #include "TimeSelectionDialog.h"
 #include "../../Tools/Dialog/ConfirmDialog.h"
+#include "../../Tools/Dialog/AutoCloseMessageBox.h"
 
 class MakeAppointment : public QWidget
 {
@@ -21,6 +23,12 @@ public:
     // 设置预约人学号
     void resetStudentNum(QString studentNum);
 
+// 数据库相关
+private:
+    Database* database;
+    void initDatabase();
+
+// 界面相关
 private:
     // 预约人的学号
     QString studentNum;
@@ -53,6 +61,10 @@ private:
 
     // 呼出确认预约对话框，返回是否确认预约
     void callConfirmDialog();
+
+    // 错误提示对话框
+    AutoCloseMessageBox* warning;
+    void initWarning();
 
     // 绑定日志信号槽
     void connectLogString();

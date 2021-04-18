@@ -1,7 +1,7 @@
 #include "MakeAppointment.h"
 #include "../../Tools/AliasName.h"
 #include "../../Tools/Tools.h"
-#include "../../Database/Database.h"
+#include <QMessageBox>
 #include <QDebug>
 
 MakeAppointment::MakeAppointment(QWidget *parent)
@@ -11,17 +11,29 @@ MakeAppointment::MakeAppointment(QWidget *parent)
     initLayout();
     initScrollArea();
 
+    initDatabase();
+
     initTimeDialog();
     initConfirmDialog();
+    initWarning();
     connectLogString();
 }
 
 void MakeAppointment::initSeats() {
-    // TODO:call database here
-    // 要在这里载入所有座位的可用时间段
+    bool success = false;
+    // 获取所有的座位
+    AliasName::SeatInfos seatInfos = database->getAllSeats(&success);
+    if (success == false) {
+        emit logSignal(tr("现场预约：获取座位表失败"));
+        warning->showAndClose(5, tr("错误提示"), tr("获取座位表失败！\n请重新进入！"));
+        return;
+    }
+    emit logSignal(tr("现场预约：获取座位表成功"));
+
+    size_t size = seatInfos.size();
     SeatWidget* temp;
-    for (int i = 0; i < 100; i++) {
-        temp = new SeatWidget(QPixmap(":/images/Seat.png"), i + 1);
+    for (size_t i = 0; i < size; i++) {
+        temp = new SeatWidget(QPixmap(":/images/Seat.png"), seatInfos[i].num);
         // 绑定选择时间对话框槽函数
         connect(temp, SIGNAL(sendSeatNum(int)), this, SLOT(callTimeDialog(int)));
         seats.push_back(temp);
@@ -62,9 +74,15 @@ void MakeAppointment::initTimeDialog() {
 void MakeAppointment::callTimeDialog(int seatNum) {
     // 记录被选中的座位编号
     selectedSeatNum = seatNum;
-    // TODO: call database here
+    // 查询结果
+    bool success = false;
     // 这里需要使用数据库获取该座位的可用时间段
-    AliasName::TimeScopes availableTimes = Database::getAvailableTimesOf(seatNum);
+    AliasName::TimeScopes availableTimes = database->getAvailableTimeScopesOf(seatNum, &success);
+    if (success == false) {
+        emit logSignal(tr("现场预约：获取座位可用时间段失败，停止呼出时间选择对话框"));
+        warning->showAndClose(5, tr("错误提示"), tr("获取座位可用时间段失败！\n请重试！"));
+        return;
+    }
 
     // 设置对话框的可用时间段
     timeDialog->setTimeScopeAndShow(availableTimes);
@@ -77,6 +95,16 @@ void MakeAppointment::initConfirmDialog() {
     connect(confirmDialog, SIGNAL(confirmed()), this, SLOT(writeAppointmentToDatabase()));
     confirmDialog->setWindowTitle(tr("确认预约"));
     confirmDialog->setConfirmButtonText(tr("我要预约"));
+}
+
+void MakeAppointment::initDatabase() {
+    database = Database::getSingleDatabase();
+}
+
+void MakeAppointment::initWarning() {
+    warning = new AutoCloseMessageBox(this);
+    warning->setIcon(QMessageBox::Warning);
+    warning->setDefaultButton(QMessageBox::Ok);
 }
 
 void MakeAppointment::callConfirmDialog() {
@@ -152,8 +180,12 @@ void MakeAppointment::writeAppointmentToDatabase() {
                 tr("时间段：") + QString::fromStdString(newAppointment.time) + "\n" +
                 tr("状态：") + QString::fromStdString(newAppointment.status)
     );
-    // TODO:call database here
-    Database::makeNewAppoinment(newAppointment);
+    // 写入数据库
+    bool result = database->makeNewAppoinment(newAppointment);
+    if (result == false) {
+        emit logSignal(tr("现场预约：写入预约记录失败"));
+        warning->showAndClose(5, tr("错误提示"), tr("预约失败，请重试！"));
+    }
     // 重置座位号和时间段
     resetSeatAndTimeScope();
 }
