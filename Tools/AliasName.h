@@ -48,6 +48,10 @@ namespace AliasName {
             this->availableTimes = availableTimes;
         }
 
+        SeatInfo(int num) {
+            this->num = num;
+        }
+
         bool hasAvailableTimeScope() {
             return this->availableTimes.empty();
         }
