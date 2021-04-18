@@ -126,6 +126,7 @@ void MakeAppointment::callConfirmDialog() {
 void MakeAppointment::connectLogString() {
     connect(timeDialog, SIGNAL(logSignal(QString)), this, SIGNAL(logSignal(QString)));
     connect(confirmDialog, SIGNAL(logSignal(QString)), this, SIGNAL(logSignal(QString)));
+    connect(database, SIGNAL(logSignal(QString)), this, SIGNAL(logSignal(QString)));
 }
 
 void MakeAppointment::hideDialog() {

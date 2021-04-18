@@ -39,6 +39,7 @@ void AdminPage::initRFID() {
 
 void AdminPage::initDatabase() {
     database = Database::getSingleDatabase();
+    connect(database, SIGNAL(logSignal(QString)), this, SLOT(appendLog(QString)));
 }
 
 void AdminPage::initLayout() {
