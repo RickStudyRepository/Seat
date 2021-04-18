@@ -72,7 +72,8 @@ HEADERS += \
     RFID/RFIDThread/RfidThread.h \
     RFID/TTY/tty.h \
     RFID/RFID.h \
-    Tools/LogSave.h
+    Tools/LogSave.h \
+    Database/sqlite/sqlite3.h
 
 RESOURCES += \
     images.qrc
