@@ -1,19 +1,25 @@
 #include "AppointmentRecord.h"
 #include <QTableWidgetItem>
 #include <QChar>
+#include <QMessageBox>
 #include "OperationAndStatus.h"
 #include "../../Tools/ConstValue.h"
 #include "../../Tools/FontFactory.h"
 #include "../../Database/Database.h"
 #include <QDebug>
 
-AppointmentRecord::AppointmentRecord(QWidget *parent) : QWidget(parent)
-{
+AppointmentRecord::AppointmentRecord(QWidget *parent) : QWidget(parent) {
     initAppointmentRecord();
     initConfirmDialog();
     initContinueDialog();
+    initWarning();
     initLayout();
+    initDatabase();
     connectLogString();
+}
+
+void AppointmentRecord::initDatabase() {
+    database = Database::getSingleDatabase();
 }
 
 void AppointmentRecord::initLayout() {
@@ -88,9 +94,16 @@ void AppointmentRecord::initContinueDialog() {
     );
 }
 
+void AppointmentRecord::initWarning() {
+    warning = new AutoCloseMessageBox(this);
+    warning->setIcon(QMessageBox::Warning);
+    warning->setDefaultButton(QMessageBox::Ok);
+}
+
 void AppointmentRecord::connectLogString() {
     connect(confirmDialog, SIGNAL(logSignal(QString)), this, SIGNAL(logSignal(QString)));
     connect(continueTimeDialog, SIGNAL(logSignal(QString)), this, SIGNAL(logSignal(QString)));
+    connect(database, SIGNAL(logSignal(QString)), this, SIGNAL(logSignal(QString)));
 }
 
 void AppointmentRecord::hideDialog() {
@@ -111,14 +124,23 @@ void AppointmentRecord::resetStudentNum(QString studentNum) {
 }
 
 void AppointmentRecord::resetAppointments() {
-    // TODO:call database here
+    // 查询结果
+    bool success = false;
     // 获取相应学号的学生的所有预约记录
-    AliasName::Appointments appointments = Database::getAllAppointmentsOf(studentNum.toStdString());
+    AliasName::Appointments appointments = database->getAllAppointmentsOf(studentNum.toStdString(), &success);
 
     // 更新预约列表
     this->appointments = appointments;
     // 清空表格内容
     appointmentRecord->clearContents();
+
+    // 获取失败，结束执行
+    if (success == false) {
+        warning->showAndClose(5, tr("错误提示"), tr("获取预约记录失败！\n请重试！"));
+        emit logSignal(tr("预约记录：获取预约记录失败"));
+        return;
+    }
+
     // 设置表格行数
     appointmentRecord->setRowCount(this->appointments.size());
     QTableWidgetItem* temp = NULL;
@@ -170,19 +192,25 @@ void AppointmentRecord::callConfirmDialog(int rowNum) {
 }
 
 void AppointmentRecord::cancelAppointment() {
-    // 更新数据库及内存中保存的数据
-    // call database here
-    Database::cancelAppointment(appointments[cancelRowNum].id);
     emit logSignal(
                 tr("预约记录：取消预约ID为：") +
                 QString::number(appointments[cancelRowNum].id) +
                 tr("预约")
     );
+    // 更新数据库及内存中保存的数据
+    bool result = database->cancelAppointment(appointments[cancelRowNum].id);
+    if (result == false) {
+        emit logSignal(tr("预约记录：取消预约失败"));
+        warning->showAndClose(5, tr("错误提示"), tr("取消预约失败！\n请重试！"));
+        return;
+    }
+    emit logSignal(tr("预约记录：取消预约成功"));
 
     // 更新界面
     // 获取相应单元格的部件并强转为OperationAndStatus类型，进而重置标签内容
     QWidget* temp = appointmentRecord->cellWidget(cancelRowNum, 2);
     qobject_cast<OperationAndStatus*>(temp)->resetOperationAndStatus(ConstValue::UsedSeat);
+    emit logSignal(tr("预约记录：重置表格中的预约状态"));
 }
 
 void AppointmentRecord::callContinueDialog(int rowNum) {
@@ -190,9 +218,18 @@ void AppointmentRecord::callContinueDialog(int rowNum) {
     continueRowNum = rowNum;
     // 获取对应预约的预约时间范围
     AliasName::TimeScope currentTimeScope = Tools::databaseTimeToTimeScope(appointments[continueRowNum].time);
-    // TODO:call database here
+    // 获取可用时间结果
+    bool success = false;
     // 从数据库中获取该座位的可用时间段
-    AliasName::TimeScopes availableTimes = Database::getAvailableTimesOf(appointments[continueRowNum].seatNum);
+    AliasName::TimeScopes availableTimes = database->getAvailableTimeScopesOf(appointments[continueRowNum].seatNum, &success);
+    // 获取可用时间失败
+    if (success == false) {
+        warning->showAndClose(5, tr("错误提示"), tr("获取可用时间失败！\n请重试"));
+        emit logSignal(tr("预约记录：获取可用时间失败，停止呼出选择续约时间对话框"));
+        return;
+    }
+    emit logSignal(tr("预约记录：获取可用时间成功，呼出选择预约时间对话框"));
+
     // 设置当前选定的时间
     continueTimeDialog->setCurrentTimeScope(currentTimeScope);
     // 设置可用时间范围并呼出对话框
@@ -209,10 +246,13 @@ void AppointmentRecord::continueAppointment(AliasName::TimeScope continueTimeSco
     // TODO:这里为什么不能使用itemAt方法获取相应的单元格内容呢
     appointmentRecord->item(continueRowNum, 1)->setText(tr(newTime.c_str()));
     // 更新数据库的结束时间
-    // TODO:call database here
-    Database::continueAppointment(appointments[continueRowNum].id, newTime);
+    bool result = database->continueAppointment(appointments[continueRowNum].id, newTime);
+    if (result == false) {
+        emit logSignal(tr("预约记录：续约失败"));
+        warning->showAndClose(5, tr("错误提示"), tr("续约失败！\n请重试！"));
+    }
     emit logSignal(
-                tr("预约记录：续约预约ID号为：") +
+                tr("预约记录：续约成功，续约ID号为") +
                 QString::number(appointments[continueRowNum].id) +
                 tr("的预约\n") +
                 tr("旧的时间：") + QString::fromStdString(oldTime) + tr("\n") +

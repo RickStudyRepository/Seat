@@ -7,14 +7,23 @@
 #include <QStringList>
 #include <QVBoxLayout>
 #include <QString>
+#include "../../Database/Database.h"
 #include "OperationAndStatus.h"
 #include "ContinueTimeDialog.h"
 #include "../../Tools/AliasName.h"
 #include "../../Tools/Dialog/ConfirmDialog.h"
+#include "../../Tools/Dialog/AutoCloseMessageBox.h"
 
 class AppointmentRecord : public QWidget
 {
     Q_OBJECT
+
+// 数据库相关
+private:
+    Database* database;
+    void initDatabase();
+
+// 界面相关
 private:
     // 布局
     QVBoxLayout* layout;
@@ -41,6 +50,10 @@ private:
     ContinueTimeDialog* continueTimeDialog;
     void initContinueDialog();
     int continueRowNum;
+
+    // 错误提示对话框
+    AutoCloseMessageBox* warning;
+    void initWarning();
 
     // 绑定日志信号槽
     void connectLogString();
