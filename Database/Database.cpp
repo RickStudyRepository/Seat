@@ -1,6 +1,7 @@
 #include "Database.h"
 #include <algorithm>
 #include <QFile>
+#include <QDebug>
 
 // 初始化单例句柄
 Database* Database::singleDatabase = NULL;
@@ -76,8 +77,8 @@ bool Database::closeDatabase() {
 bool Database::creatStudentTable() {
     int result;
     char* errorMessage;
-    emit logSignal(tr("数据库：待执行的SQL语句：") + QString(ConstValue::creatStudentTableSql));
-    qDebug() << tr("数据库：待执行的SQL语句：") + QString(ConstValue::creatStudentTableSql);
+    emit logSignal(tr("数据库：待执行的SQL语句：") + QString::fromStdString(ConstValue::creatStudentTableSql));
+    qDebug() << tr("数据库：待执行的SQL语句：") + QString::fromStdString(ConstValue::creatStudentTableSql);
     // 创建学生表
     result = sqlite3_exec(
                 database,
@@ -98,8 +99,8 @@ bool Database::creatStudentTable() {
 bool Database::creatSeatTable() {
     int result;
     char* errorMessage;
-    emit logSignal(tr("数据库：待执行的SQL语句：") + QString(ConstValue::creatSeatTableSql));
-    qDebug() << tr("数据库：待执行的SQL语句：") + QString(ConstValue::creatSeatTableSql);
+    emit logSignal(tr("数据库：待执行的SQL语句：") + QString::fromStdString(ConstValue::creatSeatTableSql));
+    qDebug() << tr("数据库：待执行的SQL语句：") + QString::fromStdString(ConstValue::creatSeatTableSql);
     // 创建座位表
     result = sqlite3_exec(
                 database,
@@ -147,8 +148,8 @@ bool Database::creatSeatTable() {
 bool Database::creatOccupiedTimeTable() {
     int result;
     char* errorMessage;
-    emit logSignal(tr("数据库：待执行的SQL语句：") + QString(ConstValue::creatOccupiedTimeSql));
-    qDebug() << tr("数据库：待执行的SQL语句：") + QString(ConstValue::creatOccupiedTimeSql);
+    emit logSignal(tr("数据库：待执行的SQL语句：") + QString::fromStdString(ConstValue::creatOccupiedTimeSql));
+    qDebug() << tr("数据库：待执行的SQL语句：") + QString::fromStdString(ConstValue::creatOccupiedTimeSql);
     // 创建占用时间表
     result = sqlite3_exec(
                 database,
@@ -170,8 +171,8 @@ bool Database::creatOccupiedTimeTable() {
 bool Database::creatAppointmentRecordTable() {
     int result;
     char* errorMessage;
-    emit logSignal(tr("数据库：待执行的SQL语句：") + QString(ConstValue::creatAppointmentRecordTableSql));
-    qDebug() << tr("数据库：待执行的SQL语句：") + QString(ConstValue::creatAppointmentRecordTableSql);
+    emit logSignal(tr("数据库：待执行的SQL语句：") + QString::fromStdString(ConstValue::creatAppointmentRecordTableSql));
+    qDebug() << tr("数据库：待执行的SQL语句：") + QString::fromStdString(ConstValue::creatAppointmentRecordTableSql);
     // 创建预约记录表
     result = sqlite3_exec(
                 database,
@@ -252,14 +253,14 @@ bool Database::isStudentExists(std::string studentNum, bool* success) {
                 ConstValue::selectStudentSql.c_str(),
                 studentNum.c_str()
     );
-    emit logSignal(tr("数据库：待执行的SQL语句：") + QStirng(realSelectSql));
+    emit logSignal(tr("数据库：待执行的SQL语句：") + QString(realSelectSql));
 
     // 预编译结果
     int prepareResult;
     // 预编译得到的SQL语句
     sqlite3_stmt* preparedSql = NULL;
     // 未被编译的SQL语句的起始指针
-    char* unpreparedSqlPointer = NULL;
+    const char* unpreparedSqlPointer = NULL;
     // 预编译SQL语句
     prepareResult = sqlite3_prepare(
                 database,
@@ -417,7 +418,7 @@ AliasName::Appointments Database::getAllAppointmentsOf(const std::string student
     emit logSignal(tr("数据库：待执行的SQL语句") + QString(realSelectSql));
 
     // 未进行预编译的SQL语句起始指针
-    char* unpreparedSqlPointer = NULL;
+    const char* unpreparedSqlPointer = NULL;
     // 预编译出的SQL语句
     sqlite3_stmt* preparedSql = NULL;
     // 预编译SQL语句
@@ -458,7 +459,10 @@ AliasName::Appointments Database::getAllAppointmentsOf(const std::string student
         // 取出本行的数据
         id = sqlite3_column_int(preparedSql, 0);
         seatNum = sqlite3_column_int(preparedSql, 1);
-        time.assign(sqlite3_column_text(preparedSql, 2));
+        // 这里的强转可能是不安全的
+        // 使用这个语句不能编译通过，主要是该接口返回了const unsigned char*
+//        time.assign(sqlite3_column_text(preparedSql, 2));
+        time.assign((const char*)sqlite3_column_text(preparedSql, 2));
         status = intToStatusString(sqlite3_column_int(preparedSql, 3));
         appointments.push_back(AliasName::Appointment(id, seatNum, time, status));
     }
@@ -480,7 +484,7 @@ AliasName::SeatInfos Database::getAllSeats(bool* success) {
     // 预编译得到的SQL语句
     sqlite3_stmt* preparedSql = NULL;
     // 未被预编译的SQL语句的起始指针
-    char* unpreparedSqlPointer = NULL;
+    const char* unpreparedSqlPointer = NULL;
     preparedResult = sqlite3_prepare(
                 database,
                 ConstValue::selectAllSeatsSql.c_str(),
@@ -606,7 +610,7 @@ AliasName::TimeScopes Database::getUnavailableTimeScopesOf(int seatNum, bool* su
     // 预编译得到的SQL语句
     sqlite3_stmt* preparedSql = NULL;
     // 未被预编译到的SQL语句起始地址
-    char* unpreparedSqlPointer = NULL;
+    const char* unpreparedSqlPointer = NULL;
     // 执行预编译
     prepareResult = sqlite3_prepare(
                 database,
@@ -636,7 +640,8 @@ AliasName::TimeScopes Database::getUnavailableTimeScopesOf(int seatNum, bool* su
             sqlite3_free(preparedSql);
             break;
         }
-        time.assign(sqlite3_column_text(preparedSql, 0));
+        // TODO：这里的强转可能不安全
+        time.assign((const char*)sqlite3_column_text(preparedSql, 0));
         unavailableTimeScopes.push_back(Tools::databaseTimeToTimeScope(time));
     }
 

@@ -17,7 +17,7 @@ class Database : public QObject
     Q_OBJECT
 public:
     // 获取单例变量实例的指针
-    Database*& getSingleDatabase();
+    static Database*& getSingleDatabase();
 
     ~Database();
 
@@ -47,12 +47,12 @@ public:
 
 private:
     // 单例变量句柄
-    Database* singleDatabase;
+    static Database* singleDatabase;
 
     Database(QObject* parent = NULL);
 
     // 数据库句柄
-    static sqlite3* database;
+    sqlite3* database;
 
     // 打开数据库
     bool openDatabase();
@@ -74,7 +74,7 @@ private:
     // 获取某一个座位的占用时间段
     AliasName::TimeScopes getUnavailableTimeScopesOf(int seatNum, bool* success);
 
-    std::vector<std::pair<int, std::string>> statusStringInt;
+    std::vector< std::pair<int, std::string> > statusStringInt;
     void initStatusStringIntMap();
     // 状态字符串和状态值的转换
     int statusStringToInt(const std::string status);

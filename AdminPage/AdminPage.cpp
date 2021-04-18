@@ -219,7 +219,7 @@ void AdminPage::confirmWriteStudentNum(QString studentNum) {
     }
     // 检查学号是否已保存在数据库中
     bool success = false;
-    bool result = database->isStudentExists(studentNum, &success);
+    bool result = database->isStudentExists(studentNum.toStdString(), &success);
     // 查询失败
     if (*success == false) {
         warning->showAndClose(5, tr("查询失败"), tr("检验学号失败，请重试！"));
@@ -272,7 +272,7 @@ void AdminPage::writeStudentNum() {
     else {
         appendLog(tr("管理员界面：向卡片内写入学号：") + studentNum + tr("成功"));
         // 写卡成功，那么将学号写入到数据库
-        bool result = database->insertNewStudent(studentNum);
+        bool result = database->insertNewStudent(studentNum.toStdString());
         if (result == false) {
             appendLog(tr("管理员界面：将学号写入数据库失败"));
             warning->showAndClose(5, tr("写入失败"), tr("将学号写入数据库时失败，请重试！"));
