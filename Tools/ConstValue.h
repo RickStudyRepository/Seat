@@ -89,7 +89,7 @@ namespace ConstValue {
         // 数据库相关的属性
         inline namespace DatabaseProperty {
             // 数据库名称
-            const std::string databaseName = "Seat.db";
+            const std::string databaseName = "./Database/Seat.db";
 
             // 表名
             // 学生表
