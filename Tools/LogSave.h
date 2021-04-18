@@ -8,7 +8,7 @@
 
 class LogSave {
 public:
-    LogSave() : filename("SeatLogFile/" + Tools::getCurrentDatetime() + ".log") {
+    LogSave() : filename("./SeatLogFile/" + Tools::getCurrentDatetime() + ".log") {
 
     }
 
