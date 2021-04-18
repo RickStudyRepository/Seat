@@ -244,6 +244,91 @@ std::string Database::intToStatusString(const int status) {
     }
 }
 
+// 查询学号是否已经存在
+bool Database::isStudentExists(std::string studentNum, bool* success) {
+    bool result = false;
+    // 构造查询SQL语句
+    char* realSelectSql = sqlite3_mprintf(
+                ConstValue::selectStudentSql.c_str(),
+                studentNum.c_str()
+    );
+    emit logSignal(tr("数据库：待执行的SQL语句：") + QStirng(realSelectSql));
+
+    // 预编译结果
+    int prepareResult;
+    // 预编译得到的SQL语句
+    sqlite3_stmt* preparedSql = NULL;
+    // 未被编译的SQL语句的起始指针
+    char* unpreparedSqlPointer = NULL;
+    // 预编译SQL语句
+    prepareResult = sqlite3_prepare(
+                database,
+                realSelectSql,
+                -1,
+                &preparedSql,
+                &unpreparedSqlPointer
+    );
+
+    // 释放sqlite3_mprintf内部申请的动态内存
+    sqlite3_free(realSelectSql);
+
+    // 预编译失败
+    if (prepareResult != SQLITE_OK) {
+        emit logSignal(tr("数据库：预编译SQL语句失败，错误码：") + QString::number(prepareResult));
+        *success = false;
+        return result;
+    }
+
+    // 查询结果
+    int selectResult;
+    // 预编译成功
+    selectResult = sqlite3_step(preparedSql);
+    // 若有一行，那么学号一定存在
+    if (selectResult == SQLITE_ROW) {
+        result = true;
+    }
+    // 查询成功
+    *success = true;
+    // 释放预编译得到的SQL语句占用的动态内存
+    sqlite3_finalize(preparedSql);
+
+    return result;
+}
+
+// 插入新的学号
+bool Database::insertNewStudent(std::string studentNum) {
+    emit logSignal(tr("数据库：插入新的学号：") + QString::fromStdString(studentNum));
+    // 构造插入SQL语句
+    char* realInsertSql = sqlite3_mprintf(
+                ConstValue::insertNewStudentSql.c_str(),
+                studentNum.c_str(),
+                // 默认密码为学号
+                studentNum.c_str()
+    );
+    emit logSignal(tr("数据库：待执行的SQL语句：") + QString(realInsertSql));
+
+    int result;
+    char* errorMessage = NULL;
+    result = sqlite3_exec(
+                database,
+                realInsertSql,
+                NULL,
+                NULL,
+                &errorMessage
+    );
+    // 释放sqlite3_mprintf内部申请的动态内存
+    sqlite3_free(realInsertSql);
+    // 插入失败
+    if (result != SQLITE_OK) {
+        emit logSignal(tr("数据库：插入新的学号失败，错误码为：") + QString::number(result) + tr("错误提示：") + QString(errorMessage));
+        // 释放错误信息字符串占用的动态内存
+        sqlite3_free(errorMessage);
+        return false;
+    }
+    emit logSignal(tr("数据库：插入新的学号成功"));
+    return true;
+}
+
 // 插入新的占用时间记录
 bool Database::insertNewOccupiedTime(const int seatNum, const std::string time) {
     emit logSignal(tr("数据库：插入新的座位占用时间"));
@@ -253,6 +338,7 @@ bool Database::insertNewOccupiedTime(const int seatNum, const std::string time) 
                 seatNum,
                 time.c_str()
     );
+    emit logSignal(tr("数据库：待执行的SQL语句：") + QString(realInsertSql));
     char* errorMessage;
     int result;
     result = sqlite3_exec(
@@ -377,6 +463,7 @@ AliasName::Appointments Database::getAllAppointmentsOf(const std::string student
         appointments.push_back(AliasName::Appointment(id, seatNum, time, status));
     }
 
+    emit logSignal(tr("数据库：获取预约记录成功"));
     *success = true;
     return appointments;
 }
@@ -387,9 +474,7 @@ AliasName::SeatInfos Database::getAllSeats(bool* success) {
     AliasName::SeatInfos seatInfos;
 
     emit logSignal(tr("数据库：获取所有座位号"));
-    // 这里没有使用sqlite3_mprintf，不需要使用sqlite3_free释放内部申请的动态内存
-    const char* realSelectSql = ConstValue::selectAllSeatsSql.c_str();
-    emit logSignal(tr("数据库：待执行的SQL语句：") + QString(realSelectSql));
+    emit logSignal(tr("数据库：待执行的SQL语句：") + QString::fromStdString(ConstValue::selectAllSeatsSql));
     // 预编译结果
     int preparedResult;
     // 预编译得到的SQL语句
@@ -398,7 +483,7 @@ AliasName::SeatInfos Database::getAllSeats(bool* success) {
     char* unpreparedSqlPointer = NULL;
     preparedResult = sqlite3_prepare(
                 database,
-                realSelectSql,
+                ConstValue::selectAllSeatsSql.c_str(),
                 -1,
                 &preparedSql,
                 &unpreparedSqlPointer
@@ -428,6 +513,7 @@ AliasName::SeatInfos Database::getAllSeats(bool* success) {
         seatInfos.push_back(AliasName::SeatInfo(seatNum));
     }
 
+    emit logSignal(tr("数据库：获取所有座位号成功"));
     *success = true;
     return seatInfos;
 }
@@ -554,7 +640,7 @@ AliasName::TimeScopes Database::getUnavailableTimeScopesOf(int seatNum, bool* su
         unavailableTimeScopes.push_back(Tools::databaseTimeToTimeScope(time));
     }
 
-    emit logSignal(tr("数据库：读取成功"));
+    emit logSignal(tr("数据库：获取座位已占用时间段成功"));
     *success = true;
     return unavailableTimeScopes;
 }

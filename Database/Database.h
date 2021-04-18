@@ -21,6 +21,12 @@ public:
 
     ~Database();
 
+    // 查询学号是否已经存在
+    bool isStudentExists(std::string studentNum, bool* success);
+
+    // 插入一条学生表记录
+    bool insertNewStudent(std::string studentNum);
+
     // 创建一条新的预约记录
     bool makeNewAppoinment(AliasName::Appointment newAppointment);
 
