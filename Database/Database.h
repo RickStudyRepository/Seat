@@ -1,34 +1,82 @@
 #ifndef DATABASE_H
 #define DATABASE_H
 
-#include <QDebug>
+#include <QObject>
 #include <QString>
+#include <string>
 #include "Tools/AliasName.h"
 #include "Tools/Tools.h"
 #include "Tools/ConstValue.h"
 
-class Database
+// SQLite数据库相关
+#include "./sqlite/sqlite3.h"
+
+// 采用单例模式
+class Database : public QObject
 {
+    Q_OBJECT
 public:
+    // 获取单例变量实例的指针
+    Database*& getSingleDatabase();
+
+    ~Database();
+
     // 创建一条新的预约记录
-    static void makeNewAppoinment(AliasName::Appointment newAppointment);
+    bool makeNewAppoinment(AliasName::Appointment newAppointment);
 
-    // 获取学号为studentNum的所有预约信息
-    static AliasName::Appointments getAllAppointmentsOf(const std::string studentNum);
+    // 获取学号为studentNum的学生的所有预约信息
+    AliasName::Appointments getAllAppointmentsOf(const std::string studentNum, bool* success);
 
-    // 获取座位号为seatNum的所有占用时间段
+    // 获取数据库中的所有座位，在这里仅获取所有座位的所有信息
+    AliasName::SeatInfos getAllSeats(bool* success);
+
     // 内部需要调用更新座位占用情况的方法
-    static void continueAppointment(unsigned int id, const std::string newTime);
+    bool continueAppointment(int appointmentId, const std::string newTime);
 
     // 取消预约，更新预约状态
-    static void cancelAppointment(unsigned int id);
-
-    // 更新座位占用情况
-    // 传入新增的座位占用时间段及座位号
-    static void updateSeatTimeScopesOf(unsigned int seatNum, AliasName::TimeScope newTimeScope);
+    bool cancelAppointment(int appointmentId);
 
     // 获取某个座位的可用时间段
-    static AliasName::TimeScopes getAvailableTimesOf(unsigned int seatNum);
+    AliasName::TimeScopes getAvailableTimeScopesOf(int seatNum, bool* success);
+
+private:
+    // 单例变量句柄
+    Database* singleDatabase;
+
+    Database(QObject* parent = NULL);
+
+    // 数据库句柄
+    static sqlite3* database;
+
+    // 打开数据库
+    bool openDatabase();
+
+    // 关闭数据库
+    bool closeDatabase();
+
+    // 初始化数据库，在打开数据库之后进行建表
+    bool isInited;
+    bool creatStudentTable();
+    bool creatSeatTable();
+    bool creatOccupiedTimeTable();
+    bool creatAppointmentRecordTable();
+    bool initDatabase();
+
+    // 插入一条新的座位占用记录
+    bool insertNewOccupiedTime(int seatNum, std::string time);
+
+    // 获取某一个座位的占用时间段
+    AliasName::TimeScopes getUnavailableTimeScopesOf(int seatNum, bool* success);
+
+    std::vector<std::pair<int, std::string>> statusStringInt;
+    void initStatusStringIntMap();
+    // 状态字符串和状态值的转换
+    int statusStringToInt(const std::string status);
+    std::string intToStatusString(const int status);
+
+signals:
+    // 日志信号
+    void logSignal(QString);
 };
 
 #endif // DATABASE_H
