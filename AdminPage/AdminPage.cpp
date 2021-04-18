@@ -10,6 +10,7 @@ AdminPage::AdminPage(QWidget *parent)
     : QWidget(parent), logTextEdit(new QTextEdit(this)) {
     password = ConstValue::password;
 
+    initDatabase();
     initRFID();
     initSystemName();
     initHorizontalLine();
@@ -34,6 +35,10 @@ AdminPage::~AdminPage() {
 void AdminPage::initRFID() {
     rfid = RFID::getRFID();
     connect(rfid, SIGNAL(logSignal(QString)), this, SLOT(appendLog(QString)));
+}
+
+void AdminPage::initDatabase() {
+    database = Database::getSingleDatabase();
 }
 
 void AdminPage::initLayout() {
@@ -206,9 +211,24 @@ void AdminPage::callDigitKeyBoard(QLineEdit* output) {
 
 void AdminPage::confirmWriteStudentNum(QString studentNum) {
     // 检验输入是否为空
-    if (studentNum == tr("")) {
-        warning->showAndClose(3, tr("非法的学号"), tr("学号不能为空"));
-        appendLog(tr("管理员界面：输入的学号为空，停止写入"));
+    if (studentNum.length() == ConstValue::studentNumLength) {
+        warning->showAndClose(5, tr("非法学号"), tr("学号的长度只能是9位数字"));
+        appendLog(tr("管理员界面：输入的学号非法，停止写入"));
+        return;
+    }
+    // 检查学号是否已保存在数据库中
+    bool success = false;
+    bool result = database->isStudentExists(studentNum, &success);
+    // 查询失败
+    if (*success == false) {
+        warning->showAndClose(5, tr("查询失败"), tr("检验学号失败，请重试！"));
+        appendLog(tr("管理员界面：检验学号是否已存在失败，停止写入"));
+        return;
+    }
+    // 学号已存在
+    if (result != false) {
+        warning->showAndClose(5, tr("非法学号"), tr("学号已存在！"));
+        appendLog(tr("管理员界面：学号已存在，停止写入"));
         return;
     }
     // 关闭输入对话框及数字键盘
@@ -250,6 +270,12 @@ void AdminPage::writeStudentNum() {
     // 写入成功，写入日志
     else {
         appendLog(tr("管理员界面：向卡片内写入学号：") + studentNum + tr("成功"));
+        // 写卡成功，那么将学号写入到数据库
+        bool result = database->insertNewStudent(studentNum);
+        if (result == false) {
+            appendLog(tr("管理员界面：将学号写入数据库失败"));
+            warning->showAndClose(5, tr("写入失败"), tr("将学号写入数据库时失败，请重试！"));
+        }
     }
 
     // 写入完成，将初始化卡片信息按钮置为可用

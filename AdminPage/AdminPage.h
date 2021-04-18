@@ -9,6 +9,7 @@
 #include <QGridLayout>
 #include <QFrame>
 #include <QPoint>
+#include "../Database/Database.h"
 #include "../Tools/DigitKeyBoard/DigitKeyBoard.h"
 #include "../Tools/Dialog/InputDialog.h"
 #include "../Tools/Dialog/ConfirmDialog.h"
@@ -23,6 +24,11 @@ class AdminPage : public QWidget
 private:
     RFID* rfid;
     void initRFID();
+
+// 数据库相关
+private:
+    Database* database;
+    void initDatabase();
 
 // 界面相关
 private:
