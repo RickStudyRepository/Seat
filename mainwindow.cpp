@@ -8,6 +8,7 @@ MainWindow::MainWindow(QWidget *parent)
     // 默认设置是否正在前往管理员界面为false
     isGoingAdminPage = false;
     initRFID();
+    initDatabase();
     initWindowBasicProperty();
     initAdminPage();
     initHomePage();
@@ -22,6 +23,10 @@ MainWindow::MainWindow(QWidget *parent)
 
 void MainWindow::initRFID() {
     this->rfid = RFID::getRFID();
+}
+
+void MainWindow::initDatabase() {
+    database = Database::getSingleDatabase();
 }
 
 void MainWindow::initWindowBasicProperty() {
@@ -213,8 +218,27 @@ void MainWindow::readStudentNum() {
     }
     // 读取成功，切到操作界面
     else {
-        gotoOperationPage(studentNum);
         emit logSignal(tr("主窗口：进入操作界面时，获取ID卡内学号成功"));
+        // 查询学号是否存在
+        bool result = database->isStudentExists(studentNum.toStdString(), &success);
+        // 检验学号成功
+        if (success == true) {
+            // 学号不存在，不能前往操作界面
+            if (result == false) {
+                warning->showAndClose(5, tr("非法用户"), tr("未识别的用户，请找管理员注册"));
+                emit logSignal(tr("主窗口：数据库中没有学号为：") + studentNum + tr("的记录"));
+            }
+            // 学号存在，验证通过，前往操作界面
+            else {
+                emit logSignal(tr("主窗口：用户合法，前往操作界面"));
+                gotoOperationPage(studentNum);
+            }
+        }
+        // 检验学号失败
+        else {
+            warning->showAndClose(5, tr("错误提示"), tr("检验用户失败，请重试！"));
+            emit logSignal(tr("主窗口：检验用户：") + studentNum + tr("失败，停止前往操作界面"));
+        }
     }
 
     // 恢复首页对鼠标和键盘事件的响应

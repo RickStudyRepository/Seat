@@ -14,6 +14,7 @@
 #include "Tools/Dialog/InputDialog.h"
 #include "Tools/Dialog/AutoCloseMessageBox.h"
 #include "Tools/ConstValue.h"
+#include "Database/Database.h"
 
 // RFID相关
 #include "RFID/RFID.h"
@@ -29,6 +30,11 @@ public:
 private:
     RFID* rfid;
     void initRFID();
+
+// 数据库相关
+private:
+    Database* database;
+    void initDatabase();
 
 // 界面相关
 private:
