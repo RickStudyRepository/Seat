@@ -10,6 +10,7 @@ OperationPage::OperationPage(QWidget *parent) : QWidget(parent) {
     initOperationTab();
     initLayout();
     connectLogString();
+    qDebug() << "Operation page init successfully!";
 }
 
 void OperationPage::initHeadWidget() {
