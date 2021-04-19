@@ -16,6 +16,7 @@ AppointmentRecord::AppointmentRecord(QWidget *parent) : QWidget(parent) {
     initLayout();
     initDatabase();
     connectLogString();
+    qDebug() << "AppointmentRecord page init successfully!";
 }
 
 void AppointmentRecord::initDatabase() {
@@ -103,7 +104,6 @@ void AppointmentRecord::initWarning() {
 void AppointmentRecord::connectLogString() {
     connect(confirmDialog, SIGNAL(logSignal(QString)), this, SIGNAL(logSignal(QString)));
     connect(continueTimeDialog, SIGNAL(logSignal(QString)), this, SIGNAL(logSignal(QString)));
-    connect(database, SIGNAL(logSignal(QString)), this, SIGNAL(logSignal(QString)));
 }
 
 void AppointmentRecord::hideDialog() {
@@ -123,6 +123,18 @@ void AppointmentRecord::resetStudentNum(QString studentNum) {
     emit logSignal(tr("预约记录：重置登录的学生的学号为：") + studentNum);
 }
 
+void AppointmentRecord::clearAppointmentRecord() {
+    // 释放上一次进入构造的操作和状态部件占用的动态内存
+    size_t size = osList.size();
+    for (size_t i = 0; i < size; i++) {
+        delete osList[i];
+    }
+    // 清空上一次进入构造的操作和状态部件指针
+    osList.clear();
+    // 清空表格内容
+    appointmentRecord->clearContents();
+}
+
 void AppointmentRecord::resetAppointments() {
     // 查询结果
     bool success = false;
@@ -131,8 +143,8 @@ void AppointmentRecord::resetAppointments() {
 
     // 更新预约列表
     this->appointments = appointments;
-    // 清空表格内容
-    appointmentRecord->clearContents();
+    // 清空表格中的内容
+    clearAppointmentRecord();
 
     // 获取失败，结束执行
     if (success == false) {
@@ -163,6 +175,7 @@ void AppointmentRecord::resetAppointments() {
         connect(tempOS, SIGNAL(continueSignal(int)), this, SLOT(callContinueDialog(int)));
         // 绑定日志信号
         connect(tempOS, SIGNAL(logSignal(QString)), this, SIGNAL(logSignal(QString)));
+        osList.push_back(tempOS);
         appointmentRecord->setCellWidget(i, 2, tempOS);
     }
     emit logSignal(tr("预约记录：重置预约记录表格内容"));

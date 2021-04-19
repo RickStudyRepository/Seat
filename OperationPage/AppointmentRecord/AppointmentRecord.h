@@ -36,8 +36,12 @@ private:
     QStringList headStringList;
     // 表格
     QTableWidget* appointmentRecord;
+    // 当前操作和状态部件的指针
+    std::vector<OperationAndStatus*> osList;
     // 初始化表格格式
     void initAppointmentRecord();
+    // 清空表格内容，包含操作和状态部件
+    void clearAppointmentRecord();
     // 调整单元格格式
     void formatTableItem(QTableWidgetItem* item);
 
