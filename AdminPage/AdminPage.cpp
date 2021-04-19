@@ -17,6 +17,7 @@ AdminPage::AdminPage(QWidget *parent)
     initAuthorName();
     initReturnButton();
     initCardContentButton();
+    initChangeCardContentButton();
     initLogTextEdit();
     initSaveLogButton();
     initInputDialog();
@@ -45,10 +46,11 @@ void AdminPage::initDatabase() {
 
 void AdminPage::initLayout() {
     layout = new QGridLayout(this);
-    layout->addWidget(systemName, 0, 0, 1, 7);
+    layout->addWidget(systemName, 0, 0, 1, 6);
+    layout->addWidget(exitButton, 0, 6, 1, 1);
     layout->addWidget(returnButton, 0, 7, 1, 1);
     layout->addWidget(authorName, 1, 0, 1, 4);
-    layout->addWidget(exitButton, 1, 5, 1, 1);
+    layout->addWidget(changeCardContent, 1, 5, 1, 1);
     layout->addWidget(initCardContent, 1, 6, 1, 1);
     layout->addWidget(saveLogButton, 1, 7, 1, 1);
     layout->addWidget(horizontalLine, 2, 0, 1, 8);
@@ -96,6 +98,15 @@ void AdminPage::initCardContentButton() {
     connect(initCardContent, SIGNAL(released()), this, SLOT(inputStudentNum()));
 }
 
+void AdminPage::initChangeCardContentButton() {
+    // 将修改卡片的标志置为false
+    changeCardFlag = false;
+    changeCardContent = new QPushButton(this);
+    changeCardContent->setText(tr("修改学号"));
+    changeCardContent->setFont(FontFactory::describeFont());
+    connect(changeCardContent, SIGNAL(released()), this, SLOT(rewriteCardContent()));
+}
+
 void AdminPage::initLogTextEdit() {
     // logTextEdit的初始化使用了类的初始化列表，因为是一个常量
     logTextEdit->setFont(FontFactory::describeFont());
@@ -120,8 +131,8 @@ void AdminPage::initInputDialog() {
     connect(inputDialog, SIGNAL(confirmed(QString)), this, SLOT(confirmWriteStudentNum(QString)));
     connect(inputDialog, SIGNAL(showKeyBoardSignal(QLineEdit*)), this, SLOT(callDigitKeyBoard(QLineEdit*)));
     connect(inputDialog, SIGNAL(finished(int)), this, SLOT(hideDigitKeyBoard()));
-    connect(inputDialog, SIGNAL(finished(int)), this, SLOT(enableInitCardContentButton()));
-    connect(inputDialog, SIGNAL(cancel()), this, SLOT(enableInitCardContentButton()));
+    connect(inputDialog, SIGNAL(finished(int)), this, SLOT(enableCardContentButton()));
+    connect(inputDialog, SIGNAL(cancel()), this, SLOT(enableCardContentButton()));
 }
 
 void AdminPage::initDigitKeyBoard() {
@@ -134,8 +145,8 @@ void AdminPage::initConfirmDialog() {
     confirmDialog->setConfirmButtonText(tr("确认写入"));
     confirmDialog->setWindowTitle(tr("写入学号确认"));
     connect(confirmDialog, SIGNAL(confirmed()), this, SLOT(writeStudentNum()));
-    connect(confirmDialog,  SIGNAL(cancel()), this, SLOT(enableInitCardContentButton()));
-    connect(confirmDialog, SIGNAL(finished(int)), this, SLOT(enableInitCardContentButton()));
+    connect(confirmDialog,  SIGNAL(cancel()), this, SLOT(enableCardContentButton()));
+    connect(confirmDialog, SIGNAL(finished(int)), this, SLOT(enableCardContentButton()));
 }
 
 void AdminPage::initWarning() {
@@ -175,17 +186,28 @@ void AdminPage::saveLog() {
     logSave.writeLog(logTextEdit->toPlainText());
 }
 
-void AdminPage::enableInitCardContentButton() {
+void AdminPage::enableCardContentButton() {
+    // 允许初始化卡片
     initCardContent->setEnabled(true);
+    // 允许修改卡片
+    changeCardContent->setEnabled(true);
+    // 将正在修改卡片的标志置为false
+    changeCardFlag = false;
 }
 
 bool AdminPage::verifyPassword(QString password) {
     return this->password == password.toStdString();
 }
 
+void AdminPage::rewriteCardContent() {
+    changeCardFlag = true;
+    inputStudentNum();
+}
+
 void AdminPage::inputStudentNum() {
     // 将初始化卡片信息按钮置为不可用，阻止用户重复操作
     initCardContent->setEnabled(false);
+    changeCardContent->setEnabled(false);
 
     // 清空文本框内的内容
     inputDialog->clearLineEdit();
@@ -219,20 +241,23 @@ void AdminPage::confirmWriteStudentNum(QString studentNum) {
         appendLog(tr("管理员界面：输入的学号非法，停止写入"));
         return;
     }
-    // 检查学号是否已保存在数据库中
-    bool success = false;
-    bool result = database->isStudentExists(studentNum.toStdString(), &success);
-    // 查询失败
-    if (success == false) {
-        warning->showAndClose(5, tr("查询失败"), tr("检验学号失败，请重试！"));
-        appendLog(tr("管理员界面：检验学号是否已存在失败，停止写入"));
-        return;
-    }
-    // 学号已存在
-    if (result != false) {
-        warning->showAndClose(5, tr("非法学号"), tr("学号已存在！"));
-        appendLog(tr("管理员界面：学号已存在，停止写入"));
-        return;
+    // 如果不是修改卡片内容，则检查学号是否已存在
+    if (changeCardFlag == false) {
+        // 检查学号是否已保存在数据库中
+        bool success = false;
+        bool result = database->isStudentExists(studentNum.toStdString(), &success);
+        // 查询失败
+        if (success == false) {
+            warning->showAndClose(5, tr("查询失败"), tr("检验学号失败，请重试！"));
+            appendLog(tr("管理员界面：检验学号是否已存在失败，停止写入"));
+            return;
+        }
+        // 学号已存在
+        if (result != false) {
+            warning->showAndClose(5, tr("非法学号"), tr("学号已存在！"));
+            appendLog(tr("管理员界面：学号已存在，停止写入"));
+            return;
+        }
     }
     // 关闭输入对话框及数字键盘
     closeInputDialog();
@@ -282,7 +307,7 @@ void AdminPage::writeStudentNum() {
     }
 
     // 写入完成，将初始化卡片信息按钮置为可用
-    enableInitCardContentButton();
+    enableCardContentButton();
 }
 
 void AdminPage::gotoFront(QPoint parentPos) {

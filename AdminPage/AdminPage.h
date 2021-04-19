@@ -54,6 +54,10 @@ private:
     // 初始化卡片信息的按钮
     QPushButton* initCardContent;
     void initCardContentButton();
+    bool changeCardFlag;
+    // 修改卡片信息的按钮
+    QPushButton* changeCardContent;
+    void initChangeCardContentButton();
     // 日志文本框，常量指针指向常量数据
     QTextEdit* const logTextEdit;
     void initLogTextEdit();
@@ -122,6 +126,8 @@ private slots:
     void confirmWriteStudentNum(QString studentNum);
     // 向卡片内写入学号
     void writeStudentNum();
+    // 修改卡片内容
+    void rewriteCardContent();
     // 关闭输入对话框
     void closeInputDialog();
     // 隐藏数字键盘
@@ -131,7 +137,7 @@ private slots:
     void appendLog(QString logString);
 
     // 将初始化卡片信息的按钮置为可用
-    void enableInitCardContentButton();
+    void enableCardContentButton();
 
     // 保存日志槽函数
     void saveLog();
