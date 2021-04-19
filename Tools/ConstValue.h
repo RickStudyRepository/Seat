@@ -4,7 +4,6 @@
 #include "MacroDefinition.h"
 #include "AliasName.h"
 #include <QString>
-#include <QIcon>
 #include <QSize>
 
 using namespace MacroDefinition;
@@ -15,7 +14,7 @@ namespace ConstValue {
         // 窗口标题
         const QString appName = "Seat";
         // 窗口图标
-        const QIcon appIcon = QIcon(QString(":/images/Seat.ico"));
+        const QString appIconLoction = ":/images/Seat.ico";
         // 应用窗口大小
         const QSize windowSize = QSize(800, 480);
     }
@@ -86,7 +85,7 @@ namespace ConstValue {
             const size_t seatNums = 100;
 
             // 默认可用时间段
-            const AliasName::TimeScope maxTimeScope = AliasName::TimeScope(8, 12);
+            const AliasName::TimeScope maxTimeScope = AliasName::TimeScope(8, 22);
         }
 
         // 数据库相关的属性
@@ -109,41 +108,41 @@ namespace ConstValue {
         inline namespace CreatTableSQL {
             // 创建学生表SQL语句
             const std::string creatStudentTableSql =
-                    "Creat Table " + studentTableName + "("
+                    "Create Table " + studentTableName + "(" +
                     // 学号固定长度为9
-                    "number char(9) Primary Key Not NULL, "
+                    "number char(9) Primary Key Not NULL, " +
                     // 密码变动长度为16
-                    "password varchar(16) Not NULL"
+                    "password varchar(16) Not NULL" +
                     ");";
             // 创建座位表SQL语句
             const std::string creatSeatTableSql =
-                    "Creat Table " + seatTableName + "("
+                    "Create Table " + seatTableName + "(" +
                     // 座位表仅存储所有座位的座位号
-                    "number int Primary Key Not NULL"
+                    "number int Primary Key Not NULL" +
                     ");";
             // 创建占用时间表SQL语句
             const std::string creatOccupiedTimeSql =
-                    "Creat Table " + occupiedTimeTableName + "("
+                    "Create Table " + occupiedTimeTableName + "(" +
                     // 将编号设置为自增长，这个时候必须设置数据类型为Integer（在SQLite数据库中）
-                    "id Integer Primary Key Not NULL AutoIncrement, "
-                    "seatNum int Not NULL, "
-                    "time char(22) Not NULL, "
+                    "id Integer Primary Key AutoIncrement Not NULL, " +
+                    "seatNum int Not NULL, " +
+                    "time char(22) Not NULL, " +
                     // 将seatNum设置为外键
-                    "Foreign Key(seatNum) References Seat(number)"
+                    "Foreign Key(seatNum) References Seat(number)" +
                     ");";
             // 创建预约记录表SQL语句
             const std::string creatAppointmentRecordTableSql =
-                    "Creat Table " + appointmentRecordTableName + "("
+                    "Create Table " + appointmentRecordTableName + "(" +
                     // 将预约号设置为自增长
-                    "id Integer Primary Key Not NULL AutoIncrement, "
-                    "studentNum char(9) Not NULL, "
-                    "appointmentInfo Integer Not NULL, "
+                    "id Integer Primary Key AutoIncrement Not NULL, " +
+                    "studentNum char(9) Not NULL, " +
+                    "appointmentInfo Integer Not NULL, " +
                     // status使用整数存储，取出时转化为相应的字符串
-                    "status smallint Not NULL, "
+                    "status smallint Not NULL, " +
                     // 将学号设置为外键
-                    "Foreign Key(studentNum) References Student(number), "
+                    "Foreign Key(studentNum) References Student(number), " +
                     // 将预约信息设置为外键
-                    "Foreign Key(appointmentInfo) References OccupiedTime(id)"
+                    "Foreign Key(appointmentInfo) References OccupiedTime(id)" +
                     ");";
         }
 
@@ -151,32 +150,32 @@ namespace ConstValue {
         inline namespace InsertSQLTemplate {
             // 插入一条学生记录
             const std::string insertNewStudentSql =
-                    "Insert Into " + studentTableName + " "
-                    "(number, password) "
-                    "Values(%q, %q);";
+                    "Insert Into " + studentTableName + " " +
+                    "(number, password) " +
+                    "Values('%q', '%q');";
             // 插入一条座位记录
             const std::string insertNewSeatSql =
-                    "Insert Into " + seatTableName + " "
-                    "(number) "
+                    "Insert Into " + seatTableName + " " +
+                    "(number) " +
                     "Values(%d);";
             // TODO：自增长主键需要配合`sqlite3_last_insert_rowid`使用，获取自增长的id值
             // 插入一条新的座位占用时间
             const std::string insertNewOccupiedTimeSql =
-                    "Insert Into " + occupiedTimeTableName + " "
-                    "(seatNum, time) "
-                    "Values(%d, %q);";
+                    "Insert Into " + occupiedTimeTableName + " " +
+                    "(seatNum, time) " +
+                    "Values(%d, '%q');";
             // 插入一条新的预约记录
             const std::string insertNewAppointmentSql =
-                    "Insert Into " + appointmentRecordTableName + " "
-                    "(studentNum, appointmentInfo, status) "
-                    "Values(%q, %d, %d);";
+                    "Insert Into " + appointmentRecordTableName + " " +
+                    "(studentNum, appointmentInfo, status) " +
+                    "Values('%q', %d, %d);";
         }
 
         // 查询相关的SQL语句模板
         inline namespace SelectSQLTemplate {
             // 查询某位同学是否存在
             const std::string selectStudentSql =
-                    "Select number From " + studentTableName + " Where number = %q;";
+                    "Select number From " + studentTableName + " Where number = '%q';";
             // 查询所有的座位号
             const std::string selectAllSeatsSql =
                     "Select number From " + seatTableName + ";";
@@ -185,14 +184,14 @@ namespace ConstValue {
                     "Select time From " + occupiedTimeTableName + " Where seatNum = %d;";
             // 查询某位同学的所有预约记录
             const std::string selectAllAppointmentsOfStudentSql =
-                    "Select "
-                    "" + appointmentRecordTableName + ".id, "
-                    "" + occupiedTimeTableName + ".seatNum, "
-                    "" + occupiedTimeTableName + ".time, "
-                    "" + appointmentRecordTableName + ".status "
-                    "From " + occupiedTimeTableName + " Inner Join " + appointmentRecordTableName + " "
-                    "On " + occupiedTimeTableName + ".id = " + appointmentRecordTableName + ".appointmentInfo "
-                    "Where " + appointmentRecordTableName + ".studentNum = %q;";
+                    "Select " +
+                    appointmentRecordTableName + ".id, " +
+                    occupiedTimeTableName + ".seatNum, " +
+                    occupiedTimeTableName + ".time, " +
+                    appointmentRecordTableName + ".status " +
+                    "From " + occupiedTimeTableName + " Inner Join " + appointmentRecordTableName + " " +
+                    "On " + occupiedTimeTableName + ".id = " + appointmentRecordTableName + ".appointmentInfo " +
+                    "Where " + appointmentRecordTableName + ".studentNum = '%q';";
         }
 
         // 更新相关的SQL语句模板
@@ -200,18 +199,14 @@ namespace ConstValue {
             // 更新一条预约记录的占用时间段
             const std::string updateSeatOccupiedTimeSql =
                     // 设置更新后的时间
-                    "Update " + occupiedTimeTableName + " Set time = %q "
                     // 连接占用时间表与预约记录表
-                    "From " + occupiedTimeTableName + " Inner Join " + appointmentRecordTableName + " "
-                    // 表连接条件
-                    "On " + occupiedTimeTableName + ".id = " + appointmentRecordTableName + ".appointmentInfo "
+                    "Update " + occupiedTimeTableName + " Set time = '%q' " +
                     // 与传入id相等
-                    "Where " + appointmentRecordTableName + ".id = %d;";
+                    "Where " + occupiedTimeTableName + ".id = %d;";
             // 取消一条预约，并将其状态修改为已履约
             const std::string updateAppointmentStatusSql =
                     // 更新状态
-                    "Update " + appointmentRecordTableName + " Set status = %d "
-                    "From " + appointmentRecordTableName + " "
+                    "Update " + appointmentRecordTableName + " Set status = %d " +
                     "Where " + appointmentRecordTableName + ".id = %d;";
         }
     }
