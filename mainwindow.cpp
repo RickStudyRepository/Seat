@@ -249,7 +249,6 @@ void MainWindow::closeInputDialogAndDigitKeyBoard() {
     emit logSignal(tr("主窗口：自动关闭管理员密码输入对话框并隐藏数字键盘"));
 }
 
-// TODO：使用该方法结束程序，尝试解决结束程序之后显示屏没有刷新的问题
 void MainWindow::endProgram() {
     hide();
     close();
