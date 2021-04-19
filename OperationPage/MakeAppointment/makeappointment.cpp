@@ -7,20 +7,26 @@
 MakeAppointment::MakeAppointment(QWidget *parent)
     : QWidget(parent), selectedSeatNum(-1), timeScope(AliasName::TimeScope(-1, -1))
 {
+    qDebug() << "Begin init Makeappointment page";
+    qDebug() << "Begin init Database in Makeappointment page";
+    initDatabase();
     initSeats();
+    qDebug() << "Begin init Layout in Makeappointment page";
     initLayout();
     initScrollArea();
-
-    initDatabase();
 
     initTimeDialog();
     initConfirmDialog();
     initWarning();
     connectLogString();
+
+    qDebug() << "Makeappointment page init successfully!";
 }
 
 void MakeAppointment::initSeats() {
+    qDebug() << "Begin init seats in Makeappointment page";
     bool success = false;
+    qDebug() << "Read seats info from Database in Makeappointment page";
     // 获取所有的座位
     AliasName::SeatInfos seatInfos = database->getAllSeats(&success);
     if (success == false) {
@@ -83,6 +89,8 @@ void MakeAppointment::callTimeDialog(int seatNum) {
         warning->showAndClose(5, tr("错误提示"), tr("获取座位可用时间段失败！\n请重试！"));
         return;
     }
+    qDebug() << "Make Appointment: size: " << availableTimes.size();
+    qDebug() << availableTimes[0].first << availableTimes[0].second;
 
     // 设置对话框的可用时间段
     timeDialog->setTimeScopeAndShow(availableTimes);
@@ -126,7 +134,6 @@ void MakeAppointment::callConfirmDialog() {
 void MakeAppointment::connectLogString() {
     connect(timeDialog, SIGNAL(logSignal(QString)), this, SIGNAL(logSignal(QString)));
     connect(confirmDialog, SIGNAL(logSignal(QString)), this, SIGNAL(logSignal(QString)));
-    connect(database, SIGNAL(logSignal(QString)), this, SIGNAL(logSignal(QString)));
 }
 
 void MakeAppointment::hideDialog() {
