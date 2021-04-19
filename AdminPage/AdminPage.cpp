@@ -26,6 +26,7 @@ AdminPage::AdminPage(QWidget *parent)
     initInfoMessageBox();
     initExitButton();
     initLayout();
+    qDebug() << "Admin page init successfully!";
 }
 
 AdminPage::~AdminPage() {
@@ -38,7 +39,7 @@ void AdminPage::initRFID() {
 }
 
 void AdminPage::initDatabase() {
-    database = Database::getSingleDatabase();
+    database = Database::getSingleDatabase(this);
     connect(database, SIGNAL(logSignal(QString)), this, SLOT(appendLog(QString)));
 }
 
@@ -166,6 +167,7 @@ void AdminPage::appendLog(QString logString) {
         // 更新上次写入日志的时间
         previousLogTime = nowTime;
     }
+    logSave.writeLog(logTextEdit->toPlainText());
 }
 
 void AdminPage::saveLog() {
@@ -212,7 +214,7 @@ void AdminPage::callDigitKeyBoard(QLineEdit* output) {
 
 void AdminPage::confirmWriteStudentNum(QString studentNum) {
     // 检验输入是否为空
-    if (studentNum.length() == ConstValue::studentNumLength) {
+    if (studentNum.length() != ConstValue::studentNumLength) {
         warning->showAndClose(5, tr("非法学号"), tr("学号的长度只能是9位数字"));
         appendLog(tr("管理员界面：输入的学号非法，停止写入"));
         return;
@@ -221,7 +223,7 @@ void AdminPage::confirmWriteStudentNum(QString studentNum) {
     bool success = false;
     bool result = database->isStudentExists(studentNum.toStdString(), &success);
     // 查询失败
-    if (*success == false) {
+    if (success == false) {
         warning->showAndClose(5, tr("查询失败"), tr("检验学号失败，请重试！"));
         appendLog(tr("管理员界面：检验学号是否已存在失败，停止写入"));
         return;
