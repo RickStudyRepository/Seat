@@ -26,7 +26,7 @@ void MainWindow::initRFID() {
 
 void MainWindow::initWindowBasicProperty() {
     setWindowTitle(ConstValue::appName);
-    setWindowIcon(ConstValue::appIcon);
+    setWindowIcon(QIcon(ConstValue::appIconLoction));
     setFixedSize(ConstValue::windowSize);
 }
 
