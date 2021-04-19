@@ -7,6 +7,7 @@
 #include <QPushButton>
 #include <QGridLayout>
 #include <QIcon>
+#include <QDebug>
 #include "CountDown.h"
 #include "../../Tools/FontFactory.h"
 #include "../../Tools/ConstValue.h"
@@ -54,6 +55,7 @@ public:
         layout->setMargin(4);
         setLayout(layout);
         setFont(FontFactory::describeFont());
+        qDebug() << "Headwidget page init successfully!";
     }
 
     void resetLogInLabelText(QString studentNum) {
