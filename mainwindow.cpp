@@ -64,7 +64,6 @@ void MainWindow::connectLogString() {
     connect(operationPage, SIGNAL(logSignal(QString)), adminPage, SLOT(appendLog(QString)));
     connect(inputDialog, SIGNAL(logSignal(QString)), adminPage, SLOT(appendLog(QString)));
     connect(digitKeyBoard, SIGNAL(logSignal(QString)), adminPage, SLOT(appendLog(QString)));
-    connect(rfid, SIGNAL(logSignal(QString)), adminPage, SLOT(appendLog(QString)));
     connect(this, SIGNAL(logSignal(QString)), adminPage, SLOT(appendLog(QString)));
 }
 
