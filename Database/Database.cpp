@@ -16,9 +16,11 @@ Database *&Database::getSingleDatabase(QWidget* parent) {
 
 Database::Database(QWidget* parent) : QWidget(parent) {
     database = NULL;
+    // 初始化状态字符串和状态值之间的对应关系
+    initStatusStringIntMap();
     // 检查数据库文件是否存在
     isInited = QFile::exists(QString::fromStdString(ConstValue::databaseName));
-    // 打开数据库成功则初始化数据库
+    // 打开数据库成功则检查是否需要初始化数据库
     if (openDatabase() == true) {
         // 如果数据库文件不存在，则执行建表方法
         if (isInited == false) {
@@ -36,8 +38,6 @@ Database::Database(QWidget* parent) : QWidget(parent) {
     else {
         closeDatabase();
     }
-    // 初始化状态字符串和状态值之间的对应关系
-    initStatusStringIntMap();
 }
 
 // 通过给数据库找一个父亲，让QT的对象树帮我们调用delete，
@@ -280,7 +280,7 @@ bool Database::isStudentExists(std::string studentNum, bool* success) {
     // 未被编译的SQL语句的起始指针
     const char* unpreparedSqlPointer = NULL;
     // 预编译SQL语句
-    prepareResult = sqlite3_prepare(
+    prepareResult = sqlite3_prepare_v2(
                 database,
                 realSelectSql,
                 -1,
@@ -440,7 +440,7 @@ AliasName::Appointments Database::getAllAppointmentsOf(const std::string student
     // 预编译出的SQL语句
     sqlite3_stmt* preparedSql = NULL;
     // 预编译SQL语句
-    int prepareResult = sqlite3_prepare(
+    int prepareResult = sqlite3_prepare_v2(
                 database,
                 realSelectSql,
                 // -1表示编译传入的整个字符串
@@ -504,7 +504,7 @@ AliasName::SeatInfos Database::getAllSeats(bool* success) {
     sqlite3_stmt* preparedSql = NULL;
     // 未被预编译的SQL语句的起始指针
     const char* unpreparedSqlPointer = NULL;
-    preparedResult = sqlite3_prepare(
+    preparedResult = sqlite3_prepare_v2(
                 database,
                 ConstValue::selectAllSeatsSql.c_str(),
                 -1,
@@ -633,7 +633,7 @@ AliasName::TimeScopes Database::getUnavailableTimeScopesOf(int seatNum, bool* su
     // 未被预编译到的SQL语句起始地址
     const char* unpreparedSqlPointer = NULL;
     // 执行预编译
-    prepareResult = sqlite3_prepare(
+    prepareResult = sqlite3_prepare_v2(
                 database,
                 realSelectSql,
                 -1,
@@ -658,7 +658,8 @@ AliasName::TimeScopes Database::getUnavailableTimeScopesOf(int seatNum, bool* su
         selectResult = sqlite3_step(preparedSql);
         if (selectResult != SQLITE_ROW) {
             emit logSignal(tr("数据库：读取结束，销毁预编译出的SQL语句"));
-            sqlite3_free(preparedSql);
+            // 销毁预编译得到的SQL语句
+            sqlite3_finalize(preparedSql);
             break;
         }
         // TODO：这里的强转可能不安全
