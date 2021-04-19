@@ -6,38 +6,43 @@
 // 初始化单例句柄
 Database* Database::singleDatabase = NULL;
 
-Database *&Database::getSingleDatabase() {
+Database *&Database::getSingleDatabase(QWidget* parent) {
     // 若没有声明一个实例，则new一个实例并返回
     if (Database::singleDatabase == NULL) {
-        Database::singleDatabase = new Database();
+        Database::singleDatabase = new Database(parent);
     }
     return Database::singleDatabase;
 }
 
-Database::Database(QObject* parent) : QObject(parent) {
+Database::Database(QWidget* parent) : QWidget(parent) {
     database = NULL;
-    isInited = false;
+    // 检查数据库文件是否存在
+    isInited = QFile::exists(QString::fromStdString(ConstValue::databaseName));
     // 打开数据库成功则初始化数据库
     if (openDatabase() == true) {
-        // 如果初始化数据库失败，关闭数据库
-        if (initDatabase() == false) {
-            closeDatabase();
+        // 如果数据库文件不存在，则执行建表方法
+        if (isInited == false) {
+            // 如果初始化数据库失败，关闭数据库
+            if (initDatabase() == false) {
+                closeDatabase();
+            }
         }
-        // 初始化状态字符串和状态值之间的对应关系
-        initStatusStringIntMap();
+        // 数据库文件已存在，不再执行建表的方法
+        else {
+            qDebug() << "Init database successfully! Database already exists";
+        }
     }
     // 打开失败关闭数据库，释放SQLite内部可能占用的资源
     else {
         closeDatabase();
     }
+    // 初始化状态字符串和状态值之间的对应关系
+    initStatusStringIntMap();
 }
 
-// TODO：
-// 突然意识到这样做似乎没有任何意义，调用delete会调用析构函数，
-// 但是new出的变量会脱离作用域吗
+// 通过给数据库找一个父亲，让QT的对象树帮我们调用delete，
+// 利用delete会调用析构函数的特性实现空间的释放及数据库的关闭
 Database::~Database() {
-    // 释放单例变量占用的空间
-    delete Database::singleDatabase;
     closeDatabase();
 }
 
@@ -46,17 +51,20 @@ bool Database::openDatabase() {
     if (database == NULL) {
         int result = sqlite3_open(ConstValue::databaseName.c_str(), &database);
         if (result != SQLITE_OK) {
-            qDebug() << tr("数据库：打开数据库") +
+            qDebug() << tr("Database：open database ") +
                         QString::fromStdString(ConstValue::databaseName) +
-                        tr("失败，错误信息：") + QString(sqlite3_errmsg(database));
+                        tr(" failed，ERROR CODE: ") + QString::number(result) +
+                        tr("ErrorMessage：") + QString(sqlite3_errmsg(database));
             emit logSignal(
                         tr("数据库：打开数据库") +
                         QString::fromStdString(ConstValue::databaseName) +
-                        tr("失败，错误信息：") + QString(sqlite3_errmsg(database))
+                        tr("失败，ERROR CODE: ") + QString::number(result) +
+                        tr("错误信息：") + QString(sqlite3_errmsg(database))
             );
             return false;
         }
     }
+    qDebug() << "Open database successfully!";
     return true;
 }
 
@@ -71,14 +79,49 @@ bool Database::closeDatabase() {
         }
         database = NULL;
     }
+    qDebug() << "Database: close database";
     return true;
 }
 
-bool Database::creatStudentTable() {
+bool Database::initDatabase() {
+    if (createStudentTable() == false) {
+        return false;
+    }
+    qDebug() << "Database: create student table in init database";
+
+    if (createSeatTable() == false) {
+        return false;
+    }
+    qDebug() << "Database: create seat table in init database";
+
+    if (insertSeats() == false) {
+        return false;
+    }
+    qDebug() << "Database: insert seats in init database";
+
+    if (createOccupiedTimeTable() == false) {
+        return false;
+    }
+    qDebug() << "Database: create occupied time table in init database";
+
+    if (createAppointmentRecordTable() == false) {
+        return false;
+    }
+    qDebug() << "Database: create appointment record table in init database";
+
+    // 将数据库成功初始化的标志设为true
+    isInited = true;
+
+    qDebug() << "Init database successfully!";
+    // 所有的表均创建成功，返回true
+    return true;
+}
+
+bool Database::createStudentTable() {
     int result;
     char* errorMessage;
     emit logSignal(tr("数据库：待执行的SQL语句：") + QString::fromStdString(ConstValue::creatStudentTableSql));
-    qDebug() << tr("数据库：待执行的SQL语句：") + QString::fromStdString(ConstValue::creatStudentTableSql);
+    qDebug() << "Database: create student table sql:" << QString::fromStdString(ConstValue::creatStudentTableSql);
     // 创建学生表
     result = sqlite3_exec(
                 database,
@@ -96,11 +139,11 @@ bool Database::creatStudentTable() {
     return true;
 }
 
-bool Database::creatSeatTable() {
+bool Database::createSeatTable() {
     int result;
     char* errorMessage;
     emit logSignal(tr("数据库：待执行的SQL语句：") + QString::fromStdString(ConstValue::creatSeatTableSql));
-    qDebug() << tr("数据库：待执行的SQL语句：") + QString::fromStdString(ConstValue::creatSeatTableSql);
+    qDebug() << "Database: sql:" << QString::fromStdString(ConstValue::creatSeatTableSql);
     // 创建座位表
     result = sqlite3_exec(
                 database,
@@ -116,7 +159,11 @@ bool Database::creatSeatTable() {
         return false;
     }
 
-    // 创建成功，默认插入一定数量的座位
+    return true;
+}
+
+// 插入一定数量的座位
+bool Database::insertSeats() {
     char* realInsertSql = NULL;
     for (size_t i = 0; i < ConstValue::seatNums; i++) {
         // 构造真实的SQL语句
@@ -145,11 +192,11 @@ bool Database::creatSeatTable() {
     return true;
 }
 
-bool Database::creatOccupiedTimeTable() {
+bool Database::createOccupiedTimeTable() {
     int result;
     char* errorMessage;
     emit logSignal(tr("数据库：待执行的SQL语句：") + QString::fromStdString(ConstValue::creatOccupiedTimeSql));
-    qDebug() << tr("数据库：待执行的SQL语句：") + QString::fromStdString(ConstValue::creatOccupiedTimeSql);
+    qDebug() << "Database: sql:" << QString::fromStdString(ConstValue::creatOccupiedTimeSql);
     // 创建占用时间表
     result = sqlite3_exec(
                 database,
@@ -168,11 +215,11 @@ bool Database::creatOccupiedTimeTable() {
     return true;
 }
 
-bool Database::creatAppointmentRecordTable() {
+bool Database::createAppointmentRecordTable() {
     int result;
     char* errorMessage;
     emit logSignal(tr("数据库：待执行的SQL语句：") + QString::fromStdString(ConstValue::creatAppointmentRecordTableSql));
-    qDebug() << tr("数据库：待执行的SQL语句：") + QString::fromStdString(ConstValue::creatAppointmentRecordTableSql);
+    qDebug() << "Database: sql:" << QString::fromStdString(ConstValue::creatAppointmentRecordTableSql);
     // 创建预约记录表
     result = sqlite3_exec(
                 database,
@@ -191,37 +238,6 @@ bool Database::creatAppointmentRecordTable() {
     return true;
 }
 
-bool Database::initDatabase() {
-    // 数据库存在直接返回true
-    if (true == QFile::exists(QString::fromStdString(ConstValue::databaseName))) {
-        // 将数据库成功初始化的标志设为true
-        isInited = true;
-        return true;
-    }
-
-    if (creatStudentTable() == false) {
-        return false;
-    }
-
-    if (creatSeatTable() == false) {
-        return false;
-    }
-
-    if (creatOccupiedTimeTable() == false) {
-        return false;
-    }
-
-    if (creatAppointmentRecordTable() == false) {
-        return false;
-    }
-
-    // 将数据库成功初始化的标志设为true
-    isInited = true;
-
-    // 所有的表均创建成功，返回true
-    return true;
-}
-
 void Database::initStatusStringIntMap() {
     statusStringInt.push_back(make_pair(1, ConstValue::UsedSeat));
     statusStringInt.push_back(make_pair(2, ConstValue::UnusedSeat));
@@ -231,10 +247,11 @@ void Database::initStatusStringIntMap() {
 
 int Database::statusStringToInt(const std::string status) {
     for (size_t i = 0; i < statusStringInt.size(); i++) {
-        if (statusStringInt[i].second == status) {
+        if (status.compare(statusStringInt[i].second) == 0) {
             return statusStringInt[i].first;
         }
     }
+    return -1;
 }
 
 std::string Database::intToStatusString(const int status) {
@@ -243,6 +260,7 @@ std::string Database::intToStatusString(const int status) {
             return statusStringInt[i].second;
         }
     }
+    return "";
 }
 
 // 查询学号是否已经存在
@@ -373,7 +391,7 @@ bool Database::makeNewAppoinment(AliasName::Appointment newAppointment) {
 
     // 获取新插入的占用时间记录自增的主键值
     int occupiedTimeId = sqlite3_last_insert_rowid(database);
-
+    qDebug() << "Status in make appointment:" << QString::fromStdString(newAppointment.status);
     // 构造插入预约记录的SQL语句
     char* realInsertSql = sqlite3_mprintf(
                 ConstValue::insertNewAppointmentSql.c_str(),
@@ -464,6 +482,7 @@ AliasName::Appointments Database::getAllAppointmentsOf(const std::string student
 //        time.assign(sqlite3_column_text(preparedSql, 2));
         time.assign((const char*)sqlite3_column_text(preparedSql, 2));
         status = intToStatusString(sqlite3_column_int(preparedSql, 3));
+        qDebug() << id << seatNum << QString::fromStdString(time) << intStatus << QString::fromStdString(status);
         appointments.push_back(AliasName::Appointment(id, seatNum, time, status));
     }
 
@@ -532,6 +551,7 @@ bool Database::continueAppointment(int appointmentId, const std::string newTime)
                 newTime.c_str(),
                 appointmentId
     );
+    emit logSignal(tr("数据库：待执行的SQL语句：") + QString(realUpdateSql));
     // 保存异常信息字符串的首地址
     char* errorMessage;
     int result = sqlite3_exec(
@@ -565,6 +585,7 @@ bool Database::cancelAppointment(int appointmentId) {
                 statusStringToInt(ConstValue::UsedSeat),
                 appointmentId
     );
+    emit logSignal(tr("数据库：待执行的SQL语句：") + QString(realUpdateSql));
 
     // 存储异常字符串的首地址
     char* errorMessage;

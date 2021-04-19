@@ -1,7 +1,7 @@
 #ifndef DATABASE_H
 #define DATABASE_H
 
-#include <QObject>
+#include <QWidget>
 #include <QString>
 #include <string>
 #include "Tools/AliasName.h"
@@ -12,12 +12,12 @@
 #include "./sqlite/sqlite3.h"
 
 // 采用单例模式
-class Database : public QObject
+class Database : public QWidget
 {
     Q_OBJECT
 public:
     // 获取单例变量实例的指针
-    static Database*& getSingleDatabase();
+    static Database*& getSingleDatabase(QWidget* parent = NULL);
 
     ~Database();
 
@@ -49,7 +49,7 @@ private:
     // 单例变量句柄
     static Database* singleDatabase;
 
-    Database(QObject* parent = NULL);
+    Database(QWidget* parent = NULL);
 
     // 数据库句柄
     sqlite3* database;
@@ -62,10 +62,11 @@ private:
 
     // 初始化数据库，在打开数据库之后进行建表
     bool isInited;
-    bool creatStudentTable();
-    bool creatSeatTable();
-    bool creatOccupiedTimeTable();
-    bool creatAppointmentRecordTable();
+    bool createStudentTable();
+    bool createSeatTable();
+    bool insertSeats();
+    bool createOccupiedTimeTable();
+    bool createAppointmentRecordTable();
     bool initDatabase();
 
     // 插入一条新的座位占用记录
