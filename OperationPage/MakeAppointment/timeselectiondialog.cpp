@@ -38,6 +38,8 @@ void TimeSelectionDialog::resetStartTime() {
 }
 
 void TimeSelectionDialog::resetEndTime() {
+    // 清空结束时间下拉列表
+    endTime->clear();
     // 仅当有可用时间时更新
     if (available == false) {
         return;
@@ -54,8 +56,6 @@ void TimeSelectionDialog::resetEndTime() {
         if (selectedStartTime >= start && selectedStartTime < end) {
             // 定位到开始时间之后
             start = selectedStartTime + 1;
-            // 清空结束时间下拉列表
-            endTime->clear();
             // 设置结束时间下拉列表
             while (start <= end) {
                 endTime->addItem(Tools::intToTimeString(start));
