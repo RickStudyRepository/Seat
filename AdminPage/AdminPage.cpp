@@ -290,19 +290,24 @@ void AdminPage::writeStudentNum() {
         info->close();
     }
 
-    // 写入失败，发出错误提示
+    // 写卡失败，发出错误提示
     if (success == false) {
         warning->showAndClose(5, tr("写入失败"), tr("请重新录入学号并刷卡重试"));
         appendLog(tr("管理员界面：写入学号失败"));
     }
-    // 写入成功，写入日志
+    // 写卡成功，写入日志
     else {
         appendLog(tr("管理员界面：向卡片内写入学号：") + studentNum + tr("成功"));
+    }
+    // 如果不是修改学号则写入数据库
+    if (changeCardFlag == false) {
         // 写卡成功，那么将学号写入到数据库
-        bool result = database->insertNewStudent(studentNum.toStdString());
-        if (result == false) {
-            appendLog(tr("管理员界面：将学号写入数据库失败"));
-            warning->showAndClose(5, tr("写入失败"), tr("将学号写入数据库时失败，请重试！"));
+        if (success == true) {
+            bool result = database->insertNewStudent(studentNum.toStdString());
+            if (result == false) {
+                appendLog(tr("管理员界面：将学号写入数据库失败"));
+                warning->showAndClose(5, tr("写入失败"), tr("将学号写入数据库时失败，请重试！"));
+            }
         }
     }
 
