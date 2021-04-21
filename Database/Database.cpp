@@ -165,6 +165,8 @@ bool Database::createSeatTable() {
 // 插入一定数量的座位
 bool Database::insertSeats() {
     char* realInsertSql = NULL;
+    int result;
+    char* errorMessage = NULL;
     for (size_t i = 0; i < ConstValue::seatNums; i++) {
         // 构造真实的SQL语句
         realInsertSql = sqlite3_mprintf(
@@ -482,7 +484,6 @@ AliasName::Appointments Database::getAllAppointmentsOf(const std::string student
 //        time.assign(sqlite3_column_text(preparedSql, 2));
         time.assign((const char*)sqlite3_column_text(preparedSql, 2));
         status = intToStatusString(sqlite3_column_int(preparedSql, 3));
-        qDebug() << id << seatNum << QString::fromStdString(time) << intStatus << QString::fromStdString(status);
         appointments.push_back(AliasName::Appointment(id, seatNum, time, status));
     }
 
