@@ -45,6 +45,12 @@ public:
     // 获取某个座位的可用时间段
     AliasName::TimeScopes getAvailableTimeScopesOf(int seatNum, bool* success);
 
+    // 获取某个座位当前可用的时间段
+    AliasName::TimeScopes getCurrentAvailableTimeScopesOf(int seatNum, bool* success);
+
+    // 获取所有座位当前的信息
+    AliasName::SeatInfos getAllSeatsInfo(bool* success);
+
 private:
     // 单例变量句柄
     static Database* singleDatabase;

@@ -712,3 +712,73 @@ AliasName::TimeScopes Database::getAvailableTimeScopesOf(int seatNum, bool* succ
     *success = true;
     return availableTimeScopes;
 }
+
+// 获取一个座位当前可用的时间范围
+AliasName::TimeScopes Database::getCurrentAvailableTimeScopesOf(int seatNum, bool *success) {
+    emit logSignal(tr("数据库：开始获取编号为") + QString::number(seatNum) + tr("的座位当前时间的可用时间段"));
+    // 当前可用时间段
+    AliasName::TimeScopes availableTimeScopes;
+    // 先获取可用时间段
+    availableTimeScopes = getAvailableTimeScopesOf(seatNum, success);
+    // 获取座位可用时间段失败
+    if (*success == false) {
+        *success = false;
+        emit logSignal(tr("数据库：获取座位可用时间段失败，停止计算当前可用时间段"));
+        return availableTimeScopes;
+    }
+    // 获取可用时间段成功，计算当前可用时间段
+    // 获取当前小时值的整数值
+    int currentHourInt = QTime::currentTime().toString("HH").toInt();
+
+    // 寻找第一个满足条件的可用时间段
+    size_t size = availableTimeScopes.size();
+    int start = -1;
+    for (size_t i = 0; i < size; i++) {
+        // 找到一个处于当前时间的可用时间段
+        if (availableTimeScopes[i].second > currentHourInt) {
+            start = i;
+            break;
+        }
+    }
+
+    // 结果列表
+    AliasName::TimeScopes result;
+    if (start != -1) {
+        // 更改处于当前时间的可用时间段的开始时间
+        availableTimeScopes[start].first = currentHourInt;
+        // 获取当前时间的可用时间段
+        result.assign(availableTimeScopes.begin() + start, availableTimeScopes.end());
+    }
+    *success = true;
+    emit logSignal(tr("数据库：获取座位可用时间段成功"));
+    // 若没有找到，将返回空集合
+    return result;
+}
+
+// 获取所有座位的当前可用时间范围
+AliasName::SeatInfos Database::getAllSeatsInfo(bool* success) {
+    emit logSignal(tr("数据库：开始获取所有座位的当前可用时间范围"));
+    AliasName::SeatInfos allSeatInfos;
+    // 获取所有的座位号
+    allSeatInfos = getAllSeats(success);
+    // 获取所有座位号失败
+    if (*success == false) {
+        *success = false;
+        emit logSignal(tr("数据库：获取所有座位号失败，停止获取所有座位的当前可用时间范围"));
+        return allSeatInfos;
+    }
+    // 获取所有座位当前可用的时间段
+    size_t size = allSeatInfos.size();
+    for (size_t i = 0; i < size; i++) {
+        allSeatInfos[i].availableTimes = getCurrentAvailableTimeScopesOf(allSeatInfos[i].num, success);
+        // 获取座位可用时间段失败
+        if (*success == false) {
+            *success = false;
+            emit logSignal(tr("数据库：获取座位号为") + QString::number(allSeatInfos[i].num) + tr("的座位当前可用时间段失败，停止获取其他座位的当前可用时间段"));
+            return allSeatInfos;
+        }
+    }
+    *success = true;
+    emit logSignal(tr("数据库：获取所有座位当前可用的时间段成功"));
+    return allSeatInfos;
+}
