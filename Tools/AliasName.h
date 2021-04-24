@@ -53,7 +53,7 @@ namespace AliasName {
         }
 
         bool hasAvailableTimeScope() {
-            return this->availableTimes.empty();
+            return !this->availableTimes.empty();
         }
     } SeatInfo;
 
