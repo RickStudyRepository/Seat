@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -40,7 +40,8 @@ SOURCES += \
     RFID/HF13Point56M/RC632/RC632.cpp \
     RFID/RFIDThread/RfidThread.cpp \
     RFID/TTY/tty.cpp \
-    RFID/RFID.cpp
+    RFID/RFID.cpp \
+    Socket/tcp_server.cpp
 
 HEADERS += \
     MainWindow.h \
@@ -74,7 +75,8 @@ HEADERS += \
     RFID/TTY/tty.h \
     RFID/RFID.h \
     Tools/LogSave.h \
-    Database/sqlite/sqlite3.h
+    Database/sqlite/sqlite3.h \
+    Socket/tcp_server.h
 
 RESOURCES += \
     images.qrc
