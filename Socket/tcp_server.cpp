@@ -194,12 +194,12 @@ void tcp_server::data_back(QTcpSocket *obj, QString msg)
 {
     // prase back msg and send
     qDebug() << "back data is" << msg;
-    obj->write(msg.toUtf8());//×ª±àÂë
+    obj->write(msg.toUtf8());//è½¬ç¼–ç 
     obj->flush();
 }
 
 void tcp_server::client_dis()
 {
-     QTcpSocket *obj = (QTcpSocket*)sender();//µôÏß¶ÔÏó
-     qDebug()<<"dis"<<obj->peerAddress().toString();//´òÓ¡³öµôÏß¶ÔÏóµÄip
+     QTcpSocket *obj = (QTcpSocket*)sender();//æ‰çº¿å¯¹è±¡
+     qDebug()<<"dis"<<obj->peerAddress().toString();//æ‰“å°å‡ºæ‰çº¿å¯¹è±¡çš„ip
 }
