@@ -211,6 +211,24 @@ namespace ConstValue {
         }
     }
 
+    // Socket通信相关
+    inline namespace Socket {
+        // 监听的端口号
+        const quint16 port = 8888;
+        // 请求类型
+        // 登录
+        const QString Login = "login";
+        // 进行预约
+        const QString MakeAppointment = "reserve";
+        // 取消预约
+        const QString CancelAppointment = "cancel";
+        // 取消预约
+        const QString ContinueAppointment = "continue";
+        // 获取所有座位当前的可用状态
+        const QString GetSeatsState = "state";
+        // 获取相应学号的同学的所有预约记录
+        const QString GetRecords = "record";
+    }
 }
 
 #endif // CONSTVALUE_H
