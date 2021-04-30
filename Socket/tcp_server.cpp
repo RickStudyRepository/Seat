@@ -136,7 +136,7 @@ int tcp_server::dealRequest(QTcpSocket *obj, QString msg) {
     else if(ConstValue::CancelAppointment == list[0]) {
         // 待取消的预约号
         QString appointmentId = list[1];
-        emit logSignal(tr("Socket: 客户端请求取消预约号为") + QString::number(appointmentId) + tr("的预约"));
+        emit logSignal(tr("Socket: 客户端请求取消预约号为") + appointmentId + tr("的预约"));
 
         // 取消结果
         bool result = false;
