@@ -15,6 +15,7 @@
 #include "Tools/Dialog/AutoCloseMessageBox.h"
 #include "Tools/ConstValue.h"
 #include "Database/Database.h"
+#include "Socket/tcp_server.h"
 
 // RFID相关
 #include "RFID/RFID.h"
@@ -35,6 +36,11 @@ private:
 private:
     Database* database;
     void initDatabase();
+
+// Socket相关
+private:
+    tcp_server* server;
+    void initTcpServer();
 
 // 界面相关
 private:

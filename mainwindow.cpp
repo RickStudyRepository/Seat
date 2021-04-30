@@ -29,6 +29,11 @@ void MainWindow::initDatabase() {
     database = Database::getSingleDatabase();
 }
 
+void MainWindow::initTcpServer() {
+    server = new tcp_server(this);
+    connect(server, SIGNAL(logSignal(QString)), this, SIGNAL(logSignal(QString)));
+}
+
 void MainWindow::initWindowBasicProperty() {
     setWindowTitle(ConstValue::appName);
     setWindowIcon(QIcon(ConstValue::appIconLoction));
@@ -274,6 +279,6 @@ void MainWindow::closeInputDialogAndDigitKeyBoard() {
 }
 
 void MainWindow::endProgram() {
-    hide();
+    returnHomePageFromAdminPage();
     close();
 }
