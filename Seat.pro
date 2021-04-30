@@ -36,10 +36,6 @@ SOURCES += \
     OperationPage/AppointmentRecord/AppointmentRecord.cpp \
     OperationPage/AppointmentRecord/ContinueTimeDialog.cpp \
     Database/Database.cpp \
-    RFID/HF13Point56M/ISO14443/ISO14443.cpp \
-    RFID/HF13Point56M/RC632/RC632.cpp \
-    RFID/RFIDThread/RfidThread.cpp \
-    RFID/TTY/tty.cpp \
     RFID/RFID.cpp \
     Socket/tcp_server.cpp
 
@@ -69,10 +65,6 @@ HEADERS += \
     OperationPage/AppointmentRecord/AppointmentRecord.h \
     OperationPage/AppointmentRecord/ContinueTimeDialog.h \
     Database/Database.h \
-    RFID/HF13Point56M/ISO14443/ISO14443.h \
-    RFID/HF13Point56M/RC632/RC632.h \
-    RFID/RFIDThread/RfidThread.h \
-    RFID/TTY/tty.h \
     RFID/RFID.h \
     Tools/LogSave.h \
     Database/sqlite/sqlite3.h \
