@@ -8,6 +8,7 @@ MainWindow::MainWindow(QWidget *parent)
     // 默认设置是否正在前往管理员界面为false
     isGoingAdminPage = false;
     initRFID();
+    initTcpServer();
     initDatabase();
     initWindowBasicProperty();
     initAdminPage();
