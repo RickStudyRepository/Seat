@@ -9,7 +9,6 @@
 #include <vector>
 #include "AliasName.h"
 #include "MacroDefinition.h"
-#include "../RFID/TTY/tty.h"
 
 using namespace MacroDefinition;
 
@@ -148,24 +147,6 @@ public:
             buf[i] = id.mid(i << 1, 2).toInt(0, 16);
         }
         return len;
-    }
-
-    /**
-     * @brief ActuatorControl, 这个像是控制串口的一个方法，原示例程序中没有使用到这个方法
-     * @param sta
-     */
-    static void ActuatorControl(uint8 sta) {
-        uint8* p = tty[COM2_ID].txbuf;
-        tty[COM2_ID].txlen = 7;
-
-        p[0] = 0xFE;     // SOF
-        p[1] = 0x03;     // LEN
-        p[2] = 0xD2;    // CMD
-        p[3] = 0xFF;     // DATA
-        p[4] = sta;
-        p[5] = 0xFF;
-        p[6] = 0x0A;      // EOF
-        uart_write(COM2_ID);
     }
 };
 
