@@ -11,7 +11,7 @@ RFID* RFID::singleRFID = NULL;
 RFID::RFID(QWidget* parent)
     : QWidget(parent)
 {
-    // 暂时不知道为什么要用这个
+    // 这个用于打开串口
     rfidThread = new RfidThread();
 
     // 将初始化标志设置false
