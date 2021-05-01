@@ -1,6 +1,5 @@
 #include "RFID.h"
 #include <QDebug>
-//#include "../Tools/MacroDefinition.h"
 #include "../Tools/ConstValue.h"
 #include "../Tools/Tools.h"
 
